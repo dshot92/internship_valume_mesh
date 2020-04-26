@@ -1,6 +1,6 @@
 # **Internship**
 
-## [Polygon Mesh](https://en.wikipedia.org/wiki/Polygon_mesh)
+## Polygon Mesh
 
 A mesh is a set of vertices, edges and faces, saved in certain ways, according to the necessary specifications, with which it is possible to represent the surface of real objects on a digital domain.
 
@@ -8,17 +8,28 @@ There are both surface meshes, which represent an object only through their surf
 
 ## Transformations on Mesh
 
-As a rule, the right hand rule as in in the image is taken into account for axis positioning.![img](C:\Users\dshot\Desktop\Internship\Internship.assets\pasted image 0.png)
+As a rule, the right hand rule as in in the image is taken into account for axis positioning.
+
+![img](Internship.assets\righr_hand.png)
+
 So to rotate a mesh with respect to a point in space you can apply the transformation to all the vertices of the mesh, going to modify the coordinates of each of them.
 In case the edges are explicitly determined by the vertex pairs, it will not be necessary to go to modify them 
 
-### Scaling![img](https://lh3.googleusercontent.com/ra6A4bfcJl7BZ1gVYiWviqZtxY-9CEY2CEgZ0cWujrZkYztKHGvRB1aa3QDUFcJluRBBeDCpjpa0k_yeBfJI_TwWmrPPyIG-oVTmNAJF7Tln119O3QPGuB7oBRSv3LR7Tonk_q3x)
+### Scaling
 
-### Rotation![img](https://lh3.googleusercontent.com/i2f9vqwP43-RG3knpXoxrr2R-mAtFwowzieHN9Y0bBy-MGiy6-96C7sTN37J3e5En18mYX-qJ40QlS9ur-lgOvZaLOZ6VRwvvKQtzTUVtYd-utss_FgmCMYPVRv0mqd68CsrILWi)
+### ![img](https://lh3.googleusercontent.com/ra6A4bfcJl7BZ1gVYiWviqZtxY-9CEY2CEgZ0cWujrZkYztKHGvRB1aa3QDUFcJluRBBeDCpjpa0k_yeBfJI_TwWmrPPyIG-oVTmNAJF7Tln119O3QPGuB7oBRSv3LR7Tonk_q3x)
 
-### Translation![img](https://lh3.googleusercontent.com/RM_K4gQU5xxmXBbFPRDEW4nox-wUS-TSCINBXDZkyATvzGS7OQ6fHaMZf2PkGLbp2qLEOlYxNyKgGuSzCVaAqEGB4rU-kCIvshq76ziw6e6ZZq78POpj8CQwcZhNRQA4cT6oc2Qb)
 
-## [**Manifold**](https://en.wikipedia.org/wiki/Manifold) Concept
+
+### Rotation
+
+### ![img](https://lh3.googleusercontent.com/i2f9vqwP43-RG3knpXoxrr2R-mAtFwowzieHN9Y0bBy-MGiy6-96C7sTN37J3e5En18mYX-qJ40QlS9ur-lgOvZaLOZ6VRwvvKQtzTUVtYd-utss_FgmCMYPVRv0mqd68CsrILWi)
+
+### Translation
+
+### ![img](https://lh3.googleusercontent.com/RM_K4gQU5xxmXBbFPRDEW4nox-wUS-TSCINBXDZkyATvzGS7OQ6fHaMZf2PkGLbp2qLEOlYxNyKgGuSzCVaAqEGB4rU-kCIvshq76ziw6e6ZZq78POpj8CQwcZhNRQA4cT6oc2Qb)
+
+## Manifold Concept
 
 A space is n-manifold if and only if the outline at each of its points resembles a Euclidean space of the same size.
 
@@ -95,7 +106,7 @@ The cluster subdivision is done in a loop over all vertices:
     m.updateGL(); //Always update after transforms on mesh
 ```
 
-![Clusters around origin point](C:\Users\dshot\Desktop\Internship\Internship.assets\clusters_origin.png)
+![Clusters around origin point](Internship.assets/clusters_origin.png)
 
 
 
@@ -108,7 +119,7 @@ After fiddling with rotations, the job of finding a detectable case is done by t
 m.rotate(vec3d(0,1,0),0.001);
 ```
 
-![image-20200425182102733](C:\Users\dshot\Desktop\Internship\Internship.assets\saddle_point_marked.png)
+![image-20200425182102733](Internship.assets/saddle_point_marked.png)
 
 
 
@@ -116,19 +127,22 @@ m.rotate(vec3d(0,1,0),0.001);
 
 The cinolib library contains a function for detecting non manifold vertexes or edges of a mesh.
 
-This its *valence* is equal to 1 or 2 then the edge is manifold. Otherwise the edge is a single line or there are multiples faces adjacent to it, in which case the 2-manifoldness satisfied.
-
-![image-20200426121531490](C:/Users/dshot/Desktop/Internship/upload/image-20200426121531490.png)
-
-
-
 ```c++
 bool AbstractPolygonMesh<M,V,E,P>::edge_is_manifold(const uint eid)
 bool AbstractPolygonMesh<M,V,E,P>::vert_is_manifold(const uint vid)
 ```
 
-The first determines manifoldness of an edge by counting how many polygons a given edge is adjacent.
+#### Edge manifoldness
 
+Edge manifoldness analysis is determined by counting how many polygons a given edge is adjacent to.
 
-These, however cannot detect the manifoldness of the vertex with connect the two parts the blue cluster.
+This number, called *valence*, needs to be equal to either 1 or 2 for the edge to be manifold. Otherwise the edge is a single line or there are multiples faces adjacent to it, in which case the 2-manifoldness satisfied.
 
+![image-20200426154917119](Internship.assets/edge_valence.png)
+
+In cinolib the the edge-faces adjacencies is a vector<uint> and the valence number is therefore its size.
+Consequently edge manifoldness has O(1) complexity.
+
+#### Vertex manifoldness
+
+Analysing if vertex is manifold requires to check if every component of its edge_link is connected or not.
