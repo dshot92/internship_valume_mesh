@@ -29,12 +29,6 @@ In case the edges are explicitly determined by the vertex pairs, it will not be 
 
 ### ![img](https://lh3.googleusercontent.com/RM_K4gQU5xxmXBbFPRDEW4nox-wUS-TSCINBXDZkyATvzGS7OQ6fHaMZf2PkGLbp2qLEOlYxNyKgGuSzCVaAqEGB4rU-kCIvshq76ziw6e6ZZq78POpj8CQwcZhNRQA4cT6oc2Qb)
 
-## Manifold Concept
-
-A space is n-manifold if and only if the outline at each of its points resembles a Euclidean space of the same size.
-
-A 1-manifold space must resemble a size 1 space for each point.
-
 **Ubuntu Work Space Setup** 
 
 Download [Qt-Creator](https://www.qt.io/download-qt-installer?hsCtaTracking=99d9dd4f-5681-48d2-b096-470725510d34|074ddad0-fdef-4e53-8aa8-5e8a876d6ab4) + [Cinolib](https://github.com/mlivesu/cinolib):
@@ -58,7 +52,11 @@ To compile comment all lines referring to vtk in the **.pro** file.
 The mesh is initialized in a DrawableTrimesh and pushed onto the canvas.
 Before being, to move the mesh to the point (0,0,0) we take its bbox.
 
+## Manifold Concept
 
+A space is n-manifold if and only if the outline at each of its points resembles a Euclidean space of the same size.
+
+A 1-manifold space must resemble a size 1 space for each point.
 
 ## Mesh subdivision and inside cluster non-manifoldness cases identification.
 
