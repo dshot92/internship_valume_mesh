@@ -146,3 +146,49 @@ Consequently edge manifoldness has O(1) complexity.
 #### Vertex manifoldness
 
 Analysing if vertex is manifold requires to check if every component of its edge_link is connected or not.
+
+The function consist in a Breadth-first search over the edge_link of a vertex.
+
+```c++
+std::vector<uint> e_link = this->vert_edges_link(vid);
+std::unordered_set<uint> edge_set(e_link.begin(), e_link.end());
+
+    std::queue<uint> q;
+    q.push(e_link.front());
+
+    std::unordered_set<uint> visited;
+    visited.insert(e_link.front());
+
+    while(!q.empty())
+    {
+        uint curr = q.front();
+        q.pop();
+
+        assert(CONTAINS(visited, curr));
+
+        for(uint nbr : this->adj_e2e(curr))
+        {
+            // still in the link of vid, but not visited yet
+            if(CONTAINS(edge_set, nbr) && !CONTAINS(visited, nbr) )
+            {
+                visited.insert(nbr);
+                q.push(nbr);
+            }
+        }
+    }
+
+    return (visited.size() == e_link.size());
+```
+
+If the number of visited edges corresponds to the number of edges in the edge_link, the vertex is manifold.
+Vertex manifoldness detection has O(V + E) complexity.
+
+### How to detect a non manifold vertex inside a cluster ?
+
+This two library algorithms search over the entire mesh surface.
+
+They will not detect the two non manifold red vertices on the right side of the image, as they are so just in relation to the orange cluster of the mesh.
+
+![image-20200426194315087](Internship.assets/image-20200426194315087.png)
+
+On the bottom right poly star around the red vertex there's no 2d space path which can allow an ant to walk from the portion 2-3 to the 6-7. 
