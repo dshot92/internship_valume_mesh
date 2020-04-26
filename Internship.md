@@ -16,7 +16,7 @@ In case the edges are explicitly determined by the vertex pairs, it will not be 
 
 ### Rotation![img](https://lh3.googleusercontent.com/i2f9vqwP43-RG3knpXoxrr2R-mAtFwowzieHN9Y0bBy-MGiy6-96C7sTN37J3e5En18mYX-qJ40QlS9ur-lgOvZaLOZ6VRwvvKQtzTUVtYd-utss_FgmCMYPVRv0mqd68CsrILWi)
 
-### Traslation![img](https://lh3.googleusercontent.com/RM_K4gQU5xxmXBbFPRDEW4nox-wUS-TSCINBXDZkyATvzGS7OQ6fHaMZf2PkGLbp2qLEOlYxNyKgGuSzCVaAqEGB4rU-kCIvshq76ziw6e6ZZq78POpj8CQwcZhNRQA4cT6oc2Qb)
+### Translation![img](https://lh3.googleusercontent.com/RM_K4gQU5xxmXBbFPRDEW4nox-wUS-TSCINBXDZkyATvzGS7OQ6fHaMZf2PkGLbp2qLEOlYxNyKgGuSzCVaAqEGB4rU-kCIvshq76ziw6e6ZZq78POpj8CQwcZhNRQA4cT6oc2Qb)
 
 ## [**Manifold**](https://en.wikipedia.org/wiki/Manifold) Concept
 
@@ -116,10 +116,19 @@ m.rotate(vec3d(0,1,0),0.001);
 
 The cinolib library contains a function for detecting non manifold vertexes or edges of a mesh.
 
+This its *valence* is equal to 1 or 2 then the edge is manifold. Otherwise the edge is a single line or there are multiples faces adjacent to it, in which case the 2-manifoldness satisfied.
+
+![image-20200426121531490](C:/Users/dshot/Desktop/Internship/upload/image-20200426121531490.png)
+
+
+
 ```c++
-bool AbstractPolygonMesh<M,V,E,P>::vert_is_manifold(const uint vid)
 bool AbstractPolygonMesh<M,V,E,P>::edge_is_manifold(const uint eid)
+bool AbstractPolygonMesh<M,V,E,P>::vert_is_manifold(const uint vid)
 ```
+
+The first determines manifoldness of an edge by counting how many polygons a given edge is adjacent.
+
 
 These, however cannot detect the manifoldness of the vertex with connect the two parts the blue cluster.
 
