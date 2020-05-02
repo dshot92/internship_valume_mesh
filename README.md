@@ -11,3 +11,4 @@ TODO List
 - [ ] is poly normal implicit for edge manifoldness
 - [ ] Research for vertex manifoldness description. Might be incomplete
 - [ ] create better consistent views for screenshots
+- [ ] algorithm complexity analysis

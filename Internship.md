@@ -72,7 +72,7 @@ Manifoldness is key for a correct conversion and the subsequent reconnection of 
 
 Beginning from a tetrahedral mesh might be a little much. So let-s start with the Stanford bunny.
 
-First step is the clusterization, and since I the bunny is a pretty triangulated mesh and not many vertexes will result non manifold, I'll subdivide the mesh around the 8 spatial spaces created at the intersection of the axis.
+First step is the clusterization, and since I the bunny is a pretty triangulated mesh and not many vertices will result non manifold, I'll subdivide the mesh around the 8 spatial spaces created at the intersection of the axis.
 
 So the mesh needs to be translated in the origin :
 
@@ -108,7 +108,7 @@ The cluster subdivision is done in a loop over all vertices:
 
 
 
-### Non Manifold vertexes in same Cluster
+### Non Manifold vertices in same Cluster
 
 The only position where a non manifold vertex can appear on this nicely done mesh is over the saddle surface between the ears of the bunny.
 After fiddling with rotations, the job of finding a detectable case is done by the following code:
@@ -123,7 +123,7 @@ m.rotate(vec3d(0,1,0),0.001);
 
 ### Non manifold vertex identification
 
-The cinolib library contains a function for detecting non manifold vertexes or edges of a mesh.
+The cinolib library contains a function for detecting non manifold vertices or edges of a mesh.
 
 ```c++
 bool AbstractPolygonMesh<M,V,E,P>::edge_is_manifold(const uint eid)
@@ -191,6 +191,11 @@ They will not detect the two non manifold red vertices on the right side of the 
 
 On the bottom right poly star around the red vertex there's no 2d space path which can allow an ant to walk from the portion 2-3 to the 6-7.
 
+The idea consist in iterating over each poly star around a vertex and detect if there are polys of a given colour connected only by the vertex.
+
+The following code searches around a vertex in an ordered fashion, thanks to the *vert_ordered_polys_star(vid)* function, allowing to determine if there are disconnected same-colour polys.
+Don't really like this Booleans approach but it works.
+
 ```c++
 bool AbstractPolygonMesh<M,V,E,P>::vert_is_manifold(const uint vid, Color c) const
 {
@@ -241,5 +246,76 @@ bool AbstractPolygonMesh<M,V,E,P>::vert_is_manifold(const uint vid, Color c) con
 }
 ```
 
-// hexalab.net
+This code detects non manifold vertices of a specified cluster of polygons.
+ To easily detect them they are then marked with a red Drawable Sphere, and we can also iterate over the *vert_ordered_edges_star(vid)* and split them with and edge_split(vid, 0.5), where 0.5 is the distance relative the 2 vertex the edge.
 
+In pseudocode
+
+```pseudocode
+foreach vertex in mesh
+	if vid_is_manifold( vid, color )
+		foreach edge_incident( vid )
+			edge_split( edge_midpoint )
+```
+
+### Bunny Mesh
+
+The result on the bunny mesh is show in these 3 steps below.
+
+![manifold_vertex_blue_cluster_3_way](Internship.assets/manifold_vertex_blue_cluster.png)
+
+The algorithm iterates over each of the n vertices of the mesh, and for each has to check a small number of polys color. (not so sure about complexity, can depend on the mesh).
+
+### Cup Mesh
+
+This is a dreadfully triangulated mesh that will surely allow for some non manifoldness inside a cluster.
+The following snippet creates a desired interesting point to exam in the yellow cluster.
+
+```c++
+m.translate( m.bbox().center() );
+m.rotate(vec3d(1,0,0),0.39);
+```
+
+Again the wanted vertex appears in a saddle portion of the mesh.
+
+![cup_cluste_zoomedr](Internship.assets/cup_cluste_zoomedr.png)
+
+This case revealed a problem in the algorithm.
+
+Before even iterating over the poly star I was always checking if the first poly on the list was of the colour selected, if not I simply returned from the function.
+
+Therefore because a poly star is a unique ordered set of poly around a vertex, in the case of the bunny it was just a coincidence that the algorithm could go into the loop to check.
+
+The case in the yellow cluster of the cup was indeed not detected by this algorithm.
+
+A simple, but not really elegant solution is to iterate over every poly until one of desired colour is found and then start the check from there.
+
+```c++
+    for(auto pid : p_star){
+        if(this->poly_data(pid).color == c){
+            found_color = true;     // Cycle over p_star untill first poly of selected cluster is found
+        }
+        if(found_color){
+            if(change2){
+                if(this->poly_data(pid).color != c){
+                    change3 = true;
+                }
+            }
+            if(change1){
+                if(this->poly_data(pid).color == c){
+                    change2 = true;
+                }
+            }
+            if(this->poly_data(pid).color != c){
+                change1 = true;
+            }
+        }
+    }
+```
+
+The non manifold vertex is correctly detect now and can be dealt like before by splitting the incidentals edges.
+
+But a new problem now arises.
+A new vertex became non manifold.
+
+![image-20200503003431650](Internship.assets/image-20200503003431650.png)
