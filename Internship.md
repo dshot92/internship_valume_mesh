@@ -189,4 +189,57 @@ They will not detect the two non manifold red vertices on the right side of the 
 
 ![image-20200426194315087](Internship.assets/image-20200426194315087.png)
 
-On the bottom right poly star around the red vertex there's no 2d space path which can allow an ant to walk from the portion 2-3 to the 6-7. 
+On the bottom right poly star around the red vertex there's no 2d space path which can allow an ant to walk from the portion 2-3 to the 6-7.
+
+```c++
+bool AbstractPolygonMesh<M,V,E,P>::vert_is_manifold(const uint vid, Color c) const
+{
+    for(uint eid : this->adj_v2e(vid))
+    {
+        if(!this->edge_is_manifold(eid)) return false;
+    }
+
+    std::vector<uint> p_star = this->vert_ordered_polys_star(vid);
+    std::unordered_set<uint> edge_set(p_star.begin(), p_star.end());
+
+    std::queue<uint> q;
+    q.push(p_star.front());
+
+    std::unordered_set<uint> visited;
+    visited.insert(p_star.front());
+
+    if(this->poly_data(q.front()).color != c){
+
+        /// checking if the color correspond to the selected cluster
+        return true;
+    }
+
+    Color curr_color = this->poly_data(q.front()).color;
+
+    bool change1 = false;
+    bool change2 = false;
+    bool change3 = false;
+    for(auto pid : p_star){
+        if(change2){
+            if(this->poly_data(pid).color != curr_color){
+                change3 = true;
+            }
+        }
+        if(change1){
+            if(this->poly_data(pid).color != curr_color){
+                curr_color = this->poly_data(pid).color;
+                change2 = true;
+            }
+        }
+        if(this->poly_data(pid).color != curr_color){
+            curr_color = this->poly_data(pid).color;
+            change1 = true;
+        }
+    }
+
+    return (!change3);
+}
+```
+
+// hexalab.net
+
