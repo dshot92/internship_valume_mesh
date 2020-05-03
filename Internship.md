@@ -266,6 +266,17 @@ The result on the bunny mesh is show in these 3 steps below.
 
 The algorithm iterates over each of the n vertices of the mesh, and for each has to check a small number of polys color. (not so sure about complexity, can depend on the mesh).
 
+### Blub triangulated Mesh
+
+Same algorithm works well even this Trimesh of a fish, where 2 non manifold vertex came out where the fins attach to the body.
+
+```c++
+m.translate(m.bbox().center());
+m.rotate(vec3d(1,0,0),0.35);
+```
+
+![blub_triangulated](Internship.assets/blub_triangulated.png)
+
 ### Cup Mesh
 
 This is a dreadfully triangulated mesh that will surely allow for some non manifoldness inside a cluster.
@@ -319,3 +330,7 @@ But a new problem now arises.
 A new vertex became non manifold.
 
 ![image-20200503003431650](Internship.assets/image-20200503003431650.png)
+
+This is a problem easily solved by adjusting the clustering condition, but this could sometimes not be an viable option.
+
+A second run of the algorithm might be required so adjust the vertex manifoldness.
