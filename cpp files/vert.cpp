@@ -50,16 +50,3 @@ bool AbstractPolygonMesh<M,V,E,P>::vert_is_manifold(const uint vid, Color c) con
     return (!change3);
 }
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-
-
-template<class M, class V, class E, class P>
-CINO_INLINE
-std::vector<uint> AbstractPolygonMesh<M,V,E,P>::vert_boundary_edges(const uint vid) const
-{
-    std::vector<uint> b_edges;
-    for(uint eid : this->adj_v2e(vid)) if (edge_is_boundary(eid)) b_edges.push_back(eid);
-    return b_edges;
-}
-
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
