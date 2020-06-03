@@ -1,3 +1,5 @@
+// abstract_polygonmessh.cpp
+
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 template<class M, class V, class E, class P>
@@ -16,6 +18,7 @@ bool AbstractPolygonMesh<M,V,E,P>::vert_is_manifold(const uint vid, Color c) con
     q.push(p_star.front());
 
     std::unordered_set<uint> visited;
+
     visited.insert(p_star.front());
 
     Color curr_color = this->poly_data(q.front()).color;
@@ -49,4 +52,5 @@ bool AbstractPolygonMesh<M,V,E,P>::vert_is_manifold(const uint vid, Color c) con
     }
     return (!change3);
 }
+
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::

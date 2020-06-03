@@ -334,3 +334,97 @@ A new vertex became non manifold.
 This is a problem easily solved by adjusting the clustering condition, but this could sometimes not be an viable option.
 
 A second run of the algorithm might be required so adjust the vertex manifoldness.
+
+
+
+> A second run of the algorithm might be required so adjust the vertex manifoldness.
+
+No! I want to run the algorithm once.
+
+A tunnel must be found and the least amount of polys needs to be recolored to resolve the non manifold vertex case. 
+
+So after detecting one case we can cycle over its polys star and search for the smallest gap between 2 polys of the right color cluster.
+
+```c++
+for(uint vid = 0; vid < m.num_verts() ; ++vid){
+            if( !m.vert_is_manifold_cluster(vid, label)){
+                //Push sphere to GUI
+                DrawableSphere sphere(m.vert(vid));
+                points.push_back(sphere);
+
+                // SPLITTING
+                for(auto eid : m.vert_ordered_edges_star(vid)){
+                    m.edge_split(eid, 0.5); // lambda 0.5 == split edge by the half point
+                }
+                m.updateGL();
+
+                vector<uint> poly_star = m.vert_ordered_polys_star(vid);
+
+                // Like KMP dublicate pid to simulate a circular space in which to look for occurences
+                for(auto pid : m.vert_ordered_polys_star(vid)){
+                    poly_star.push_back(pid);
+                }
+                vector<vector<uint>> separated_slices(poly_star.size());
+                uint index = 0;
+                cout << "PolyStar size: " + to_string(poly_star.size()) << endl;
+
+                // POLY STAR
+                cout << "PolyStar: " << endl;
+                for(uint pid : poly_star){
+                    cout << pid  << endl;
+                    if(m.poly_data(pid).label != label){
+                        separated_slices.at(index).push_back(pid);
+                    }
+                    if(m.poly_data(pid).label == label)
+                        ++index;
+                }
+
+                //Smallest Slice -> Tunnel
+                vector<uint> &tunnel = poly_star; // Like setting initial size to infinity, to be sure to get che minimum set separated
+                int aux = 0;
+                for(auto &vec : separated_slices){
+                    cout << "Tunnel: " + to_string(aux) + " - Size: " + to_string(vec.size())<< endl;
+                    if(vec.size() < tunnel.size() && vec.size() > 0){
+                        cout << "Debug" << endl;
+                        cout << "Vec_Size: " + to_string(vec.size()) << endl;
+                        tunnel = vec;
+                    }
+                    ++aux;
+                }
+                cout << "Tunnel  TO RE color: " << endl;
+                for(auto pid : tunnel){
+                    cout << pid << endl;
+                }
+
+                // Recolor Tunnel
+                cout << "Recoloring PIDs: " + to_string(tunnel.size()) + " polygons"<< endl;
+                for(auto pid : tunnel){
+                    cout << pid << endl;
+                    m.poly_data(pid).label = label;
+                }
+            }
+        }
+```
+
+Here i duplicate the ordered polystar ( like in KMP ) to be sure to get every single gap between the polys.
+Then cycle over again to separate every slice in a new vector containing the poly id and lastly  another cycle to search for the smallest of this slices, which will be the tunnel we needed to recolor.
+
+![image-20200601105432744](/home/dshot/.config/Typora/typora-user-images/image-20200601105432744.png)
+
+It correctly found that the blue poly was the shortest path to create a tunnel for the yellow cluster.
+
+Same results for the trangulated_blob mesh
+
+![image-20200601110149288](/home/dshot/.config/Typora/typora-user-images/image-20200601110149288.png)
+
+![image-20200601110443744](/home/dshot/.config/Typora/typora-user-images/image-20200601110443744.png)
+
+![image-20200601111612884](/home/dshot/.config/Typora/typora-user-images/image-20200601111612884.png)
+
+On the bunny mesh the algorithm now creates a tunnel for the gray cluster, since it cycles over all the cluster colors in order.
+
+
+
+Transitioning to volume meshes a problem becomes clear.
+How can i detect non manifoldness? There's no given order for the polys around a vertex, and consequently the algorithm used for surface mesh cannot work.
+
