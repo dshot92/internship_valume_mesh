@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     QApplication a(argc, argv);
     string mesh;
 
-    int object = 1;
+    int object = 2;
     switch(object) {
       case 1:
         mesh = "/bunny.obj";
@@ -47,10 +47,6 @@ int main(int argc, char **argv)
         break;
     }
     std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + mesh;
-
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/bunny.obj";
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/cup.obj";
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/blub_triangulated.obj";
 
     DrawableTrimesh<> m(s.c_str());
 
@@ -70,108 +66,9 @@ int main(int argc, char **argv)
       default:
         break;
     }
-
-
     m.updateGL(); //Always update after transforms on mesh
 
     vector<DrawableSphere> points;
-
-    /// COLORS
-    /*
-    // Subdivision in Cluster into the 8
-    std::vector<Color> colors(8);
-    colors[0] = Color::GREEN();
-    colors[1] = Color::PASTEL_YELLOW();
-    colors[2] = Color::YELLOW();
-    colors[3] = Color::BLUE();
-    colors[4] = Color::PASTEL_PINK();
-    colors[5] = Color::PASTEL_CYAN();
-    colors[6] = Color::PASTEL_ORANGE();
-    colors[7] = Color::PASTEL_VIOLET();
-
-    double x,y,z;
-    for(uint pid=0; pid < m.num_polys(); ++pid){
-        x = m.poly_centroid(pid).x();
-        y = m.poly_centroid(pid).y();
-        z = m.poly_centroid(pid).z();
-
-        if(x >= 0 && y >= 0 && z >= 0) m.poly_data(pid).color = colors[0];
-        if(x >= 0 && y >= 0 && z <= 0) m.poly_data(pid).color = colors[1];
-        if(x >= 0 && y <= 0 && z >= 0) m.poly_data(pid).color = colors[2];
-        if(x >= 0 && y <= 0 && z <= 0) m.poly_data(pid).color = colors[3];
-        if(x <= 0 && y >= 0 && z >= 0) m.poly_data(pid).color = colors[4];
-        if(x <= 0 && y >= 0 && z <= 0) m.poly_data(pid).color = colors[5];
-        if(x <= 0 && y <= 0 && z >= 0) m.poly_data(pid).color = colors[6];
-        if(x <= 0 && y <= 0 && z <= 0) m.poly_data(pid).color = colors[7];
-    }
-
-    m.updateGL();
-
-    for(auto color: colors){
-        for(uint vid = 0; vid < m.num_verts() ; ++vid){
-
-            if( !m.vert_is_manifold(vid, color)){
-
-                //Push sphere to GUI
-                DrawableSphere sphere(m.vert(vid));
-                points.push_back(sphere);
-
-                // SPLITTING
-                for(auto eid : m.vert_ordered_edges_star(vid)){
-                    m.edge_split(eid, 0.5); // lambda 0.5 == split edge by the half point
-                }
-
-                m.updateGL();
-
-                vector<uint> poly_star = m.vert_ordered_polys_star(vid);
-
-                // Like KMP dublicate pid to simulate a circular space in which to look for occurences
-                for(auto pid : m.vert_ordered_polys_star(vid)){
-                    poly_star.push_back(pid);
-                }
-                vector<vector<uint>> separated_slices(poly_star.size());
-                uint index = 0;
-                cout << "PolyStar size: " + to_string(poly_star.size()) << endl;
-
-                // POLY STAR RED MARKED
-                cout << "PolyStar: " << endl;
-                for(uint pid : poly_star){
-                    cout << pid  << endl;
-                    if(m.poly_data(pid).color != color){
-                        separated_slices.at(index).push_back(pid);
-
-    colors[4] = Color::PASTEL_PINK();        }
-                    if(m.poly_data(pid).color == color)
-                        ++index;
-                }
-
-                //Biggest Slice -> Tunnel
-                vector<uint> &tunnel = poly_star; // Like setting initial size to infinity, to be sure to get che minimum set separated
-                int aux = 0;
-                for(auto &vec : separated_slices){
-                    cout << "Tunnel: " + to_string(aux) + " - Size: " + to_string(vec.size())<< endl;
-                    if(vec.size() < tunnel.size() && vec.size() > 0){
-                        cout << "Debug" << endl;
-                        cout << "Vec_Size: " + to_string(vec.size()) << endl;
-                        tunnel = vec;
-                    }
-                    ++aux;
-                }
-                cout << "Tunnel  TO RE color: " << endl;
-                for(auto pid : tunnel){
-                    cout << pid << endl;
-                }
-
-                // Recolor Tunnel
-                cout << "Recoloring PIDs: " + to_string(tunnel.size()) + " polygons"<< endl;
-                for(auto pid : tunnel){
-                    cout << pid << endl;
-                    m.poly_data(pid).color = color;
-                }
-            }
-        }
-    }
-    */
 
     /// LABELS
 
@@ -203,80 +100,6 @@ int main(int argc, char **argv)
     }
 
     m.rotate(vec3d(0,1,0),160.1); // for BUNNY
-
-/*
-    for(auto label : labels){
-        for(uint vid = 0; vid < m.num_verts() ; ++vid){
-            if( !m.vert_is_manifold_cluster(vid, label)){
-                //Push sphere to GUI
-                DrawableSphere sphere(m.vert(vid));
-                points.push_back(sphere);
-
-                // SPLITTING
-                for(auto eid : m.vert_ordered_edges_star(vid)){
-//                    m.edge_split(eid, 0.5); // lambda 0.5 == split edge by the half point
-                }
-                m.updateGL();
-
-                cout << "Vertex adj:"  << endl;
-                for(auto pid : m.adj_v2p(vid)){
-                    cout << pid  << endl;
-                }
-
-                vector<uint> poly_star = m.vert_ordered_polys_star(vid);
-
-                // Like KMP dublicate pid to simulate a circular space in which to look for occurences
-                for(auto pid : m.vert_ordered_polys_star(vid)){
-                    poly_star.push_back(pid);
-                }
-                vector<vector<uint>> separated_slices(poly_star.size());
-                uint index = 0;
-//                cout << "PolyStar size: " + to_string(poly_star.size()) << endl;
-
-                // POLY STAR RED MARKED
-//                cout << "PolyStar: " << endl;
-                for(uint pid : poly_star){
-//                    cout << pid  << endl;
-                    if(m.poly_data(pid).label != label){
-                        separated_slices.at(index).push_back(pid);
-                    }
-                    if(m.poly_data(pid).label == label)
-                        ++index;
-                }
-
-                //Biggest Slice -> Tunnel
-                vector<uint> &tunnel = poly_star; // Like setting initial size to infinity, to be sure to get che minimum set separated
-                int aux = 0;
-                for(auto &vec : separated_slices){
-//                    cout << "Tunnel: " + to_string(aux) + " - Size: " + to_string(vec.size())<< endl;
-                    if(vec.size() < tunnel.size() && vec.size() > 0){
-//                        cout << "Debug" << endl;
-//                        cout << "Vec_Size: " + to_string(vec.size()) << endl;
-                        tunnel = vec;
-                    }
-                    ++aux;
-                }
-//                cout << "Tunnel  TO RE color: " << endl;
-                for(auto pid : tunnel){
-//                    cout << pid << endl;
-                }
-
-                // Recolor Tunnel
-                cout << "Recoloring PIDs: " + to_string(tunnel.size()) + " polygons"<< endl;
-                for(auto pid : tunnel){
-                    cout << pid << endl;
-                    m.poly_data(pid).label = label;
-                }
-            }
-        }
-    }
-*/
-
-//    auto edges = m.adj_v2e(5853);
-//    for(auto eid : edges){
-//        m.edge_split(eid, 0.5);
-//    }
-//    m.poly_data(28581).label = 5;
 
     uint verts = m.num_verts();
     for(uint vid = 0; vid < verts ; ++vid){
@@ -459,8 +282,6 @@ int main(int argc, char **argv)
                 cout << pid << endl;
             }
 
-//            int relabel_count = int(components[to_relabel[0]].size());
-
             index = 0;
             for(auto ind : to_relabel){
                 for( auto pid : components[ind]){
@@ -471,18 +292,6 @@ int main(int argc, char **argv)
             components.clear();
         }
     }
-
-    /*
-    m.poly_data(27106).label = 2;
-    verts = m.num_verts();
-    for(uint vid = 0; vid < verts ; ++vid){
-        if( !m.vert_is_manifold_cluster(vid)){
-            //Push sphere to GUI
-            DrawableSphere sphere(m.vert(vid));
-            points.push_back(sphere);
-        }
-    }
-    */
 
     verts = m.num_verts();
     for(uint vid = 0; vid < verts ; ++vid){

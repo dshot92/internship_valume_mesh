@@ -78,7 +78,7 @@ int main(int argc, char **argv)
     }
 
     /// Costume Labelling for Cube_Tet.mesh
-
+    // 2 non manifold vertex
 //    {
 //        //Front
 //        m.poly_data(0).label = 1;
@@ -100,6 +100,9 @@ int main(int argc, char **argv)
 //        m.poly_data(11).label = 6;
 //    }
 
+    /// Costume Labelling for Cube_Tet.mesh
+    // 1 non manifold vertex
+//    {
     m.poly_data(0).label = 1;
     m.poly_data(1).label = 1;
     //Right
@@ -117,6 +120,7 @@ int main(int argc, char **argv)
     //Up
     m.poly_data(10).label = 2;
     m.poly_data(11).label = 1;
+//    }
 
     m.updateGL();
     m.poly_color_wrt_label();
@@ -129,7 +133,6 @@ int main(int argc, char **argv)
         if( !m.vert_is_manifold_cluster(vid)){
 
             /// Cut without Order !! WRONG NORMALS
-//            /*
             {
                 std::vector<uint> e_link = m.adj_v2e(vid);
                 std::unordered_set<uint> edge_set(e_link.begin(), e_link.end());
@@ -162,8 +165,6 @@ int main(int argc, char **argv)
                 m.edge_split(e_link.front(), 0.5);
                 m.updateGL();
             }
-//            */
-
 
             vector<vector<uint>> components = m.vert_poly_cc_by_labels(vid);
             unordered_map<int, int> labels;
@@ -307,8 +308,6 @@ int main(int argc, char **argv)
             for(auto pid : to_relabel){
                 cout << pid << endl;
             }
-
-//            int relabel_count = int(components[to_relabel[0]].size());
 
             index = 0;
             for(auto ind : to_relabel){

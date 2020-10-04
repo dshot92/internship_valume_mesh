@@ -1,5 +1,5 @@
 TEMPLATE        = app
-TARGET          = $$PWD/../01_base_app_trimesh_demo
+TARGET          = $$PWD/../test_trimesh_demo
 QT             += core opengl
 CONFIG         += c++11 release
 CONFIG         -= app_bundle

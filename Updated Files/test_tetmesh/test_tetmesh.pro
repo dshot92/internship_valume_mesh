@@ -1,5 +1,5 @@
 TEMPLATE        = app
-TARGET          = $$PWD/../test_tetmesh
+TARGET          = $$PWD/../test_tetmesh_demo
 QT             += core opengl
 CONFIG         += c++11 release
 CONFIG         -= app_bundle
