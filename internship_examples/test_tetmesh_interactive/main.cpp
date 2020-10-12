@@ -15,15 +15,29 @@ int main(int argc, char **argv)
     int axis_labels = true;
 
     /// https://people.sc.fsu.edu/~jburkardt/data/mesh/mesh.html
-    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/part.mesh";                                          // 55 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/sphere.mesh";                                        // 49 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/teapot_tet.mesh";                                    // 43 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cyl248.mesh";                                        //  5 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube_tet_multiple.mesh"; axis_labels = false;        //  3 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube_tet_2_labels_edge.mesh"; axis_labels = false;   //  2 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/four_tet.mesh"; axis_labels = false;                 //  2 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube_tet_2_labels.mesh"; axis_labels = false;        //  1 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube86.mesh";                                        //  1 NON manifold points -> 0 points
+
+    // Geogram to Convert trimesh to tetmesh
+    /// http://alice.loria.fr/software/geogram/doc/html/index.html
+
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/blub_triangulated_tet.mesh";                         // 176 NON manifold points -> 2 points !!
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cup_tet.mesh";                                       // 153 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/Laurana_tet.mesh";                                   // 150 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/bunny_tet.mesh";                                     // 137 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/maxFace_tet.mesh";                                   // 111 NON manifold points -> 1 points !!
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/part.mesh";                                          //  55 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/sphere.mesh";                                        //  49 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/teapot_tet.mesh";                                    //  43 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cubespikes_tet.mesh";                                //  39 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/spot_triangulated_tet.mesh";                         //  32 NON manifold points -> 1 points !!
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/3holes_tet.mesh";                                    //  25 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/bamboo_pen_tet.mesh";                                //  20 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/torus_tet.mesh";                                     //  18 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cyl248.mesh";                                        //   5 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube_tet_multiple.mesh"; axis_labels = false;        //   3 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube_tet_2_labels_edge.mesh"; axis_labels = false;   //   2 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/four_tet.mesh"; axis_labels = false;                 //   2 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube_tet_2_labels.mesh"; axis_labels = false;        //   1 NON manifold points -> 0 points
+//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube86.mesh";                                        //   1 NON manifold points -> 0 points
 
 //    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/p01.mesh"; // Load Problem (pid label to big ?? )
 //    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/korean_tet.mesh"; // Load Problem (too big ??)
@@ -85,6 +99,7 @@ int main(int argc, char **argv)
         }
     }
 
+//    verts = 0;
     for(uint mesh_vid = 0; mesh_vid < verts ; ++mesh_vid){
 
         set<uint> poly_edges;
@@ -92,6 +107,7 @@ int main(int argc, char **argv)
             poly_edges.insert(v);
         }
 
+        // Case edge is NON manifold
         for(auto eid : poly_edges){
             uint v0 = m.edge_vert_id(eid, 0);
             uint v1 = m.edge_vert_id(eid, 1);
@@ -142,10 +158,10 @@ int main(int argc, char **argv)
                 m.update_normals();
                 m.poly_color_wrt_label();
                 m.updateGL();
-
             }
         }
 
+        // Case vert is NON manifold
         for(auto eid : poly_edges){
             if( DOES_NOT_CONTAIN(edges_list, eid) ){
 
@@ -302,13 +318,13 @@ int main(int argc, char **argv)
             }
         }
 
+        // Update mesh to add the new vid to be checked
         verts = m.num_verts();
     }
 
     m.update_normals();
     m.poly_color_wrt_label();
     m.updateGL();
-
 
     // Recalculare Non manifold points
     {
@@ -321,7 +337,6 @@ int main(int argc, char **argv)
             }
         }
     }
-
 
     GLcanvas gui;
     gui.push_obj(&m);
