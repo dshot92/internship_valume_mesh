@@ -12,6 +12,7 @@ int main(int argc, char **argv)
 
     QApplication a(argc, argv);
 
+    string mesh_file;
     int axis_labels = true;
 
     /// https://people.sc.fsu.edu/~jburkardt/data/mesh/mesh.html
@@ -19,28 +20,31 @@ int main(int argc, char **argv)
     // Geogram to Convert trimesh to tetmesh
     /// http://alice.loria.fr/software/geogram/doc/html/index.html
 
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/blub_triangulated_tet.mesh";                         // 176 NON manifold points -> 2 points !!
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cup_tet.mesh";                                       // 153 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/Laurana_tet.mesh";                                   // 150 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/bunny_tet.mesh";                                     // 137 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/maxFace_tet.mesh";                                   // 111 NON manifold points -> 1 points !!
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/part.mesh";                                          //  55 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/sphere.mesh";                                        //  49 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/teapot_tet.mesh";                                    //  43 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cubespikes_tet.mesh";                                //  39 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/spot_triangulated_tet.mesh";                         //  32 NON manifold points -> 1 points !!
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/3holes_tet.mesh";                                    //  25 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/bamboo_pen_tet.mesh";                                //  20 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/torus_tet.mesh";                                     //  18 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cyl248.mesh";                                        //   5 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube_tet_multiple.mesh"; axis_labels = false;        //   3 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube_tet_2_labels_edge.mesh"; axis_labels = false;   //   2 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/four_tet.mesh"; axis_labels = false;                 //   2 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube_tet_2_labels.mesh"; axis_labels = false;        //   1 NON manifold points -> 0 points
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/cube86.mesh";                                        //   1 NON manifold points -> 0 points
+//    mesh_file = "korean_tet.mesh";                                    // 587 NON manifold points -> 0 points
+//    mesh_file = "blub_triangulated_tet.mesh";                         // 176 NON manifold points -> 0 points
+//    mesh_file = "cup_tet.mesh";                                       // 153 NON manifold points -> 0 points
+//    mesh_file = "Laurana_tet.mesh";                                   // 150 NON manifold points -> 0 points
+//    mesh_file = "bunny_tet.mesh";                                     // 137 NON manifold points -> 0 points
+//    mesh_file = "maxFace_tet.mesh";                                   // 111 NON manifold points -> 0 points
+//    mesh_file = "part.mesh";                                          //  55 NON manifold points -> 0 points
+//    mesh_file = "sphere.mesh";                                        //  49 NON manifold points -> 0 points
+//    mesh_file = "teapot_tet.mesh";                                    //  43 NON manifold points -> 0 points
+//    mesh_file = "cubespikes_tet.mesh";                                //  39 NON manifold points -> 0 points
+//    mesh_file = "spot_triangulated_tet.mesh";                         //  32 NON manifold points -> 0 points
+//    mesh_file = "p01_tet.mesh";                                       //  25 NON manifold points -> 0 points
+//    mesh_file = "3holes_tet.mesh";                                    //  25 NON manifold points -> 0 points
+//    mesh_file = "bamboo_pen_tet.mesh";                                //  20 NON manifold points -> 0 points
+//    mesh_file = "torus_tet.mesh";                                     //  18 NON manifold points -> 0 points
+//    mesh_file = "cyl248.mesh";                                        //   5 NON manifold points -> 0 points
+//    mesh_file = "cube_tet_multiple.mesh"; axis_labels = false;        //   3 NON manifold points -> 0 points
+//    mesh_file = "cube_tet_2_labels_edge.mesh"; axis_labels = false;   //   2 NON manifold points -> 0 points
+//    mesh_file = "four_tet.mesh"; axis_labels = false;                 //   2 NON manifold points -> 0 points
+//    mesh_file = "cube_tet_2_labels.mesh"; axis_labels = false;        //   1 NON manifold points -> 0 points
+    mesh_file = "cube86.mesh";                                        //   1 NON manifold points -> 0 points
 
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/p01.mesh"; // Load Problem (pid label to big ?? )
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/korean_tet.mesh"; // Load Problem (too big ??)
+    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/" + mesh_file;
+
+    cout << mesh_file << endl;
 
     /// Testing Meshes
 {
@@ -53,8 +57,6 @@ int main(int argc, char **argv)
     DrawableTetmesh<> m(s.c_str());
     m.translate(-m.centroid());
     m.scale(0.2);
-
-    m.poly_color_wrt_label();
 
     /// Labelling Around World Origin
     if (axis_labels){
@@ -99,7 +101,6 @@ int main(int argc, char **argv)
         }
     }
 
-//    verts = 0;
     for(uint mesh_vid = 0; mesh_vid < verts ; ++mesh_vid){
 
         set<uint> poly_edges;
@@ -107,11 +108,11 @@ int main(int argc, char **argv)
             poly_edges.insert(v);
         }
 
-        // Case edge is NON manifold
         for(auto eid : poly_edges){
             uint v0 = m.edge_vert_id(eid, 0);
             uint v1 = m.edge_vert_id(eid, 1);
 
+            // Case EDGE non manifold
             if ( !m.vert_is_manifold_cluster(v0) &&
                  !m.vert_is_manifold_cluster(v1) &&
                  DOES_NOT_CONTAIN(edges_list, eid) &&
@@ -119,10 +120,7 @@ int main(int argc, char **argv)
                  DOES_NOT_CONTAIN(non_manifold_edges_vids, v1)
                  ){
 
-                non_manifold_edges_vids.insert(v0);
-                non_manifold_edges_vids.insert(v1);
-
-//                edges_list.insert(eid);
+                edges_list.insert(eid);
                 map<int, int> labels;
                 // Calculate Unique Labels
                 for(auto pid : m.adj_e2p(eid)){
@@ -154,24 +152,15 @@ int main(int argc, char **argv)
                 for(auto pid : m.adj_v2p(new_vid)){
                     m.poly_data(pid).label = most_pids_label;
                 }
-
-                m.update_normals();
-                m.poly_color_wrt_label();
-                m.updateGL();
             }
-        }
+            else{
 
-        // Case vert is NON manifold
-        for(auto eid : poly_edges){
-            if( DOES_NOT_CONTAIN(edges_list, eid) ){
-
-                uint v0 = m.edge_vert_id(eid, 0);
-                uint v1 = m.edge_vert_id(eid, 1);
-
+                // Cases for single Vertex of the edge non manifold
                 if ( !m.vert_is_manifold_cluster(v0) &&
                      DOES_NOT_CONTAIN(non_manifold_edges_vids, v0)){
 
-//                    vid_list.insert(v0);
+                    non_manifold_edges_vids.insert(v0);
+
                     // RELABELLING
                     {
                         vector<vector<uint>> components = m.vert_poly_cc_by_labels(v0);
@@ -235,16 +224,12 @@ int main(int argc, char **argv)
                         }
                         m.edge_split(e_link.front(), 0.5);
                     }
-
-                    m.update_normals();
-                    m.poly_color_wrt_label();
-                    m.updateGL();
                 }
 
                 if ( !m.vert_is_manifold_cluster(v1) &&
                      DOES_NOT_CONTAIN(non_manifold_edges_vids, v1)){
 
-//                    vid_list.insert(v1);
+                    non_manifold_edges_vids.insert(v1);
 
                     // RELABELLING
                     {
@@ -309,11 +294,6 @@ int main(int argc, char **argv)
                         }
                         m.edge_split(e_link.front(), 0.5);
                     }
-
-                    m.update_normals();
-                    m.poly_color_wrt_label();
-                    m.updateGL();
-
                 }
             }
         }
@@ -357,10 +337,11 @@ int main(int argc, char **argv)
     cout << "   Fixed Mesh polys:\t" << verts << endl;
     cout << "        Added Polys:\t" << verts - original_num_polys << endl;
 
-    gui.set_scene_center(m.vert(0), 0.2, false);
+    gui.set_scene_center(m.vert(0), 0.5, false);
 
     // GUI pick VID -> components -> labels
     gui.push_marker(vec2i(10, gui.height()-20), "CMD + click to select a vertex", Color::BLACK(), 12, 0);
+    gui.push_marker(vec2i(10, gui.height()-40), "SHIFT + click to select an edge", Color::BLACK(), 12, 0);
     Profiler profiler;
 
     gui.callback_mouse_press = [&](GLcanvas *c, QMouseEvent *e)
@@ -381,7 +362,7 @@ int main(int argc, char **argv)
 
                 bool manifold0 = !m.vert_is_manifold_cluster(v0);
                 bool manifold1 = !m.vert_is_manifold_cluster(v1);
-                cout << ( manifold0 && manifold1 ? "FALSE" : "TRUE") << endl;
+                cout << ( manifold0 && manifold1 ? "Manifold - FALSE" : "Manifold - TRUE") << endl;
 
                 map<int, int> labels;
                 // Calculate Unique Labels
@@ -395,9 +376,9 @@ int main(int argc, char **argv)
                     }
                 }
                 int most_pids_label;
-                int most_pids_label_count = 9999999;
+                int most_pids_label_count = 0;
                 for(auto label : labels ){
-                    if(label.second < most_pids_label_count){
+                    if(label.second > most_pids_label_count){
                         most_pids_label_count = label.second;
                         most_pids_label = label.first;
                     }
@@ -415,12 +396,7 @@ int main(int argc, char **argv)
                     m.poly_data(pid).label = most_pids_label;
                 }
 
-                m.update_normals();
-                m.poly_color_wrt_label();
-                m.updateGL();
-
-
-                // NON MANIFOLD RED DRAWABLE SPHERES
+                // Update non manifold points
                 {
                     for(uint i = 0; i < points.size() ; ++i){
                         gui.pop(&points[i]);
@@ -439,12 +415,16 @@ int main(int argc, char **argv)
                         points[i].color = Color(1,0,0,0.5);
                         gui.push_obj(&points[i]);
                     }
+
+                    cout << ((points.size() > 0) ? ANSI_fg_color_red : ANSI_fg_color_default) << "VIDs NON manifold after  : " << points.size() << ANSI_fg_color_default << endl;
+
+                    m.update_normals();
+                    m.poly_color_wrt_label();
+                    m.updateGL();
+                    c->updateGL();
                 }
-
-                cout << "VIDs NON manifold after  : " << points.size() << endl;
-
-                c->updateGL();
             }
+
         }
 
         if (e->modifiers() == Qt::ControlModifier )
@@ -460,7 +440,7 @@ int main(int argc, char **argv)
                 cout << " ____________________________" << endl;
                 cout << "VID - " << vid << endl;
                 bool manifold = !m.vert_is_manifold_cluster(vid);
-                cout << ( manifold ? "FALSE" : "TRUE") << endl;
+                cout << ( manifold ? "Manifold - FALSE" : "Manifold - TRUE") << endl;
 
                 // RELABELLING
                 {
@@ -526,32 +506,33 @@ int main(int argc, char **argv)
                     m.edge_split(e_link.front(), 0.5);
                 }
 
-
-
-                for(uint i = 0; i < points.size() ; ++i){
-                    gui.pop(&points[i]);
-                }
-                points.clear();
-                uint verts = m.num_verts();
-                for(uint vid = 0; vid < verts ; ++vid){
-                    if( !m.vert_is_manifold_cluster(vid)){
-                        //Push sphere to GUI
-                        DrawableSphere sphere(m.vert(vid));
-                        points.push_back(sphere);
+                // Update non manifold points
+                {
+                    for(uint i = 0; i < points.size() ; ++i){
+                        gui.pop(&points[i]);
                     }
-                }
-                for(uint i = 0; i < points.size() ; ++i){
-                    points[i].size = 0.5;
-                    points[i].color = Color(1,0,0,0.5);
-                    gui.push_obj(&points[i]);
-                }
+                    points.clear();
+                    uint verts = m.num_verts();
+                    for(uint vid = 0; vid < verts ; ++vid){
+                        if( !m.vert_is_manifold_cluster(vid)){
+                            //Push sphere to GUI
+                            DrawableSphere sphere(m.vert(vid));
+                            points.push_back(sphere);
+                        }
+                    }
+                    for(uint i = 0; i < points.size() ; ++i){
+                        points[i].size = 0.5;
+                        points[i].color = Color(1,0,0,0.5);
+                        gui.push_obj(&points[i]);
+                    }
 
-                cout << "VIDs NON manifold after  : " << points.size() << endl;
+                    cout << ((points.size() > 0) ? ANSI_fg_color_red : ANSI_fg_color_default) << "VIDs NON manifold after  : " << points.size() << ANSI_fg_color_default << endl;
 
-                m.update_normals();
-                m.poly_color_wrt_label();
-                m.updateGL();
-                c->updateGL();
+                    m.update_normals();
+                    m.poly_color_wrt_label();
+                    m.updateGL();
+                    c->updateGL();
+                }
             }
         }
     };
