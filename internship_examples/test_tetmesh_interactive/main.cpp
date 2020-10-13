@@ -33,64 +33,60 @@ int main(int argc, char **argv)
 //    mesh_file = "spot_triangulated_tet.mesh";                         //  32 NON manifold points -> 0 points
 //    mesh_file = "p01_tet.mesh";                                       //  25 NON manifold points -> 0 points
 //    mesh_file = "3holes_tet.mesh";                                    //  25 NON manifold points -> 0 points
-//    mesh_file = "bamboo_pen_tet.mesh";                                //  20 NON manifold points -> 0 points
+    mesh_file = "bamboo_pen_tet.mesh";                                //  20 NON manifold points -> 0 points
 //    mesh_file = "torus_tet.mesh";                                     //  18 NON manifold points -> 0 points
 //    mesh_file = "cyl248.mesh";                                        //   5 NON manifold points -> 0 points
-//    mesh_file = "cube_tet_multiple.mesh"; axis_labels = false;        //   3 NON manifold points -> 0 points
-//    mesh_file = "cube_tet_2_labels_edge.mesh"; axis_labels = false;   //   2 NON manifold points -> 0 points
-//    mesh_file = "four_tet.mesh"; axis_labels = false;                 //   2 NON manifold points -> 0 points
-//    mesh_file = "cube_tet_2_labels.mesh"; axis_labels = false;        //   1 NON manifold points -> 0 points
-    mesh_file = "cube86.mesh";                                        //   1 NON manifold points -> 0 points
-
+//    mesh_file = "cube86.mesh";                                        //   1 NON manifold points -> 0 points
     std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/" + mesh_file;
-
     cout << mesh_file << endl;
 
-    /// Testing Meshes
-{
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/one_vertex.mesh";
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/one_tet.mesh"; axis_labels = false;
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/one_edge.mesh";
-//    std::string s = (argc==2) ? std::string(argv[1]) : std::string(DATA_PATH) + "/mesh/tetmesh/one_vertex_seven.mesh";
-}
+
+    /* Select to fix mesh*/
+    /////////////////////////
+    bool fix = true;
+    /////////////////////////
 
     DrawableTetmesh<> m(s.c_str());
     m.translate(-m.centroid());
-    m.scale(0.2);
+//    m.scale(0.2);
 
-    /// Labelling Around World Origin
-    if (axis_labels){
-        std::vector<int> labels(8);
-        labels[0] = 0;
-        labels[1] = 1;
-        labels[2] = 2;
-        labels[3] = 3;
-        labels[4] = 4;
-        labels[5] = 5;
-        labels[6] = 6;
-        labels[7] = 7;
+    // Labelling Around World Origin
+//    double x,y,z;
+//    for(uint pid=0; pid < m.num_polys(); ++pid){
+//        x = m.poly_centroid(pid).x();
+//        y = m.poly_centroid(pid).y();
+//        z = m.poly_centroid(pid).z();
 
-        double x,y,z;
-        for(uint pid=0; pid < m.num_polys(); ++pid){
-            x = m.poly_centroid(pid).x();
-            y = m.poly_centroid(pid).y();
-            z = m.poly_centroid(pid).z();
+//        if(x >= 0 && y >= 0 && z >= 0) m.poly_data(pid).label = 0;
+//        if(x >= 0 && y >= 0 && z <= 0) m.poly_data(pid).label = 1;
+//        if(x >= 0 && y <= 0 && z >= 0) m.poly_data(pid).label = 2;
+//        if(x >= 0 && y <= 0 && z <= 0) m.poly_data(pid).label = 3;
+//        if(x <= 0 && y >= 0 && z >= 0) m.poly_data(pid).label = 4;
+//        if(x <= 0 && y >= 0 && z <= 0) m.poly_data(pid).label = 5;
+//        if(x <= 0 && y <= 0 && z >= 0) m.poly_data(pid).label = 6;
+//        if(x <= 0 && y <= 0 && z <= 0) m.poly_data(pid).label = 7;
+//    }
 
-            if(x >= 0 && y >= 0 && z >= 0) m.poly_data(pid).label = 1;
-            if(x >= 0 && y >= 0 && z <= 0) m.poly_data(pid).label = 2;
-            if(x >= 0 && y <= 0 && z >= 0) m.poly_data(pid).label = 3;
-            if(x >= 0 && y <= 0 && z <= 0) m.poly_data(pid).label = 4;
-            if(x <= 0 && y >= 0 && z >= 0) m.poly_data(pid).label = 5;
-            if(x <= 0 && y >= 0 && z <= 0) m.poly_data(pid).label = 6;
-            if(x <= 0 && y <= 0 && z >= 0) m.poly_data(pid).label = 7;
-            if(x <= 0 && y <= 0 && z <= 0) m.poly_data(pid).label = 8;
-          }
+    // Labelling Quality of PIDs mapped into (0-7)
+    double min = 10000000;
+    double max = 0;
+    for(uint pid = 0; pid < m.num_polys(); ++pid){
+        double q = double(m.poly_data(pid).quality);
+        min = (min < q) ? min : q;
+        max = (max > q) ? max : q;
+    }
+    cout << min << endl;
+    cout << max << endl;
+
+    for(uint pid = 0; pid < m.num_polys(); ++pid){
+        double q = double(m.poly_data(pid).quality);
+        m.poly_data(pid).label = int((q-min)/(max-min) * (7-0) + 0);
     }
 
     vector<DrawableSphere> points;
     set<uint> edges_list;
     set<uint> non_manifold_edges_vids;
-    set<uint> vid_list;
+//    set<uint> vid_list;
 
     uint verts = m.num_verts();
     uint original_num_polys = verts;
@@ -101,6 +97,7 @@ int main(int argc, char **argv)
         }
     }
 
+    if ( !fix ) verts=0;
     for(uint mesh_vid = 0; mesh_vid < verts ; ++mesh_vid){
 
         set<uint> poly_edges;
@@ -132,7 +129,7 @@ int main(int argc, char **argv)
                         query->second++;
                     }
                 }
-                int most_pids_label;
+                int most_pids_label = 0;
                 int most_pids_label_count = 0;
                 for(auto label : labels ){
                     if(label.second > most_pids_label_count){
@@ -330,8 +327,13 @@ int main(int argc, char **argv)
 
     // PRINT SUMMARY
     cout << "|===========================================|" << endl;
-    cout << "VIDs NON manifold Before :\t" << non_manifold_vid_before << endl;
-    cout << "VIDs NON manifold After  :\t" << points.size() << endl;
+    if ( fix ){
+        cout << "VIDs NON manifold Before :\t" << non_manifold_vid_before << endl;
+        cout << "VIDs NON manifold After  :\t" << points.size() << endl;
+    }
+    else{
+        cout << "VIDs NON manifold :\t" << non_manifold_vid_before << endl;
+    }
     cout << "|===========================================|" << endl;
     cout << "Original Mesh polys:\t" << original_num_polys << endl;
     cout << "   Fixed Mesh polys:\t" << verts << endl;
