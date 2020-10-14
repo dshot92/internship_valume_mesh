@@ -1,3 +1,14 @@
+/* This is a base application for cinolib (https://github.com/maxicino/cinolib).
+ * It will show a GL canvas (and associated control panel) to interact
+ * with a triangle mesh.
+ *
+ * In case you don't need a GUI, you can drop the "Drawable" prefix from the mesh data type.
+ * What you will get is a lighter yet fully operational mesh data structure, just
+ * without the burden of OpenGL code necessary for rendering!
+ *
+ * Enjoy!
+*/
+
 #include <QApplication>
 #include <cinolib/meshes/meshes.h>
 #include <cinolib/gui/qt/qt_gui_tools.h>
@@ -11,9 +22,7 @@ int main(int argc, char **argv)
     using namespace std;
 
     QApplication a(argc, argv);
-
     string mesh_file;
-    int axis_labels = true;
 
     /// https://people.sc.fsu.edu/~jburkardt/data/mesh/mesh.html
 
@@ -25,7 +34,7 @@ int main(int argc, char **argv)
 //    mesh_file = "cup_tet.mesh";                                       // 153 NON manifold points -> 0 points
 //    mesh_file = "Laurana_tet.mesh";                                   // 150 NON manifold points -> 0 points
 //    mesh_file = "bunny_tet.mesh";                                     // 137 NON manifold points -> 0 points
-//    mesh_file = "maxFace_tet.mesh";                                   // 111 NON manifold points -> 0 points
+    mesh_file = "maxFace_tet.mesh";                                   // 111 NON manifold points -> 0 points
 //    mesh_file = "part.mesh";                                          //  55 NON manifold points -> 0 points
 //    mesh_file = "sphere.mesh";                                        //  49 NON manifold points -> 0 points
 //    mesh_file = "teapot_tet.mesh";                                    //  43 NON manifold points -> 0 points
@@ -33,7 +42,7 @@ int main(int argc, char **argv)
 //    mesh_file = "spot_triangulated_tet.mesh";                         //  32 NON manifold points -> 0 points
 //    mesh_file = "p01_tet.mesh";                                       //  25 NON manifold points -> 0 points
 //    mesh_file = "3holes_tet.mesh";                                    //  25 NON manifold points -> 0 points
-    mesh_file = "bamboo_pen_tet.mesh";                                //  20 NON manifold points -> 0 points
+//    mesh_file = "bamboo_pen_tet.mesh";                                //  20 NON manifold points -> 0 points
 //    mesh_file = "torus_tet.mesh";                                     //  18 NON manifold points -> 0 points
 //    mesh_file = "cyl248.mesh";                                        //   5 NON manifold points -> 0 points
 //    mesh_file = "cube86.mesh";                                        //   1 NON manifold points -> 0 points
@@ -75,8 +84,8 @@ int main(int argc, char **argv)
         min = (min < q) ? min : q;
         max = (max > q) ? max : q;
     }
-    cout << min << endl;
-    cout << max << endl;
+    cout << "Min poly quality : " << min << endl;
+    cout << "Man poly quality : " << max << endl;
 
     for(uint pid = 0; pid < m.num_polys(); ++pid){
         double q = double(m.poly_data(pid).quality);
@@ -89,7 +98,7 @@ int main(int argc, char **argv)
 //    set<uint> vid_list;
 
     uint verts = m.num_verts();
-    uint original_num_polys = verts;
+    uint original_num_verts = verts;
     int non_manifold_vid_before = 0;
     for(uint vid = 0; vid < verts ; ++vid){
         if( !m.vert_is_manifold_cluster(vid)){
@@ -137,6 +146,8 @@ int main(int argc, char **argv)
                         most_pids_label = label.first;
                     }
                 }
+
+                labels.clear();
 
                 uint new_vid = m.edge_split(eid, 0.5);
 
@@ -187,6 +198,9 @@ int main(int argc, char **argv)
                         for(auto pid : m.adj_v2p(v0)){
                             m.poly_data(pid).label = most_pids_label;
                         }
+                        components.clear();
+                        components.shrink_to_fit();
+                        labels.clear();
                     }
 
                     /// Cut without Order !! WRONG NORMALS
@@ -220,6 +234,9 @@ int main(int argc, char **argv)
                             }
                         }
                         m.edge_split(e_link.front(), 0.5);
+                        e_link.clear();
+                        e_link.shrink_to_fit();
+                        edge_set.clear();
                     }
                 }
 
@@ -257,6 +274,10 @@ int main(int argc, char **argv)
                         for(auto pid : m.adj_v2p(v1)){
                             m.poly_data(pid).label = most_pids_label;
                         }
+
+                        components.clear();
+                        components.shrink_to_fit();
+                        labels.clear();
                     }
 
                     /// Cut without Order !! WRONG NORMALS
@@ -290,11 +311,15 @@ int main(int argc, char **argv)
                             }
                         }
                         m.edge_split(e_link.front(), 0.5);
+                        e_link.clear();
+                        e_link.shrink_to_fit();
+                        edge_set.clear();
                     }
                 }
             }
         }
 
+        poly_edges.clear();
         // Update mesh to add the new vid to be checked
         verts = m.num_verts();
     }
@@ -326,6 +351,7 @@ int main(int argc, char **argv)
     }
 
     // PRINT SUMMARY
+    verts=m.num_verts();
     cout << "|===========================================|" << endl;
     if ( fix ){
         cout << "VIDs NON manifold Before :\t" << non_manifold_vid_before << endl;
@@ -335,9 +361,9 @@ int main(int argc, char **argv)
         cout << "VIDs NON manifold :\t" << non_manifold_vid_before << endl;
     }
     cout << "|===========================================|" << endl;
-    cout << "Original Mesh polys:\t" << original_num_polys << endl;
-    cout << "   Fixed Mesh polys:\t" << verts << endl;
-    cout << "        Added Polys:\t" << verts - original_num_polys << endl;
+    cout << "Original Mesh Verts:\t" << original_num_verts << endl;
+    cout << "   Fixed Mesh Verts:\t" << verts << endl;
+    cout << "        Added Verts:\t" << verts - original_num_verts << endl;
 
     gui.set_scene_center(m.vert(0), 0.5, false);
 

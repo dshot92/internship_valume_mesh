@@ -12,7 +12,6 @@
 #include <QApplication>
 #include <cinolib/meshes/meshes.h>
 #include <cinolib/gui/qt/qt_gui_tools.h>
-
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <cinolib/drawable_object.h>
@@ -32,7 +31,7 @@ int main(int argc, char **argv)
     QApplication a(argc, argv);
     string mesh;
 
-    int object = 10;
+    int object = 1;
     switch(object) {
         case 1: mesh = "/mesh/trimesh/bunny.obj"; break;
         case 2: mesh = "/mesh/trimesh/cup.obj"; break;
@@ -139,7 +138,7 @@ int main(int argc, char **argv)
             }
 //            */
 
-            vector<vector<uint>> components = m.vert_poly_cc_by_labels(vid);
+            vector<vector<uint>> components = m.v2p_label_cc(vid);
             unordered_map<int, int> labels;
 
             // Calculate Unique Labels

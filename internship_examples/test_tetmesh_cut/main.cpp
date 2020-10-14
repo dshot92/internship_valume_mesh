@@ -1,3 +1,14 @@
+/* This is a base application for cinolib (https://github.com/maxicino/cinolib).
+ * It will show a GL canvas (and associated control panel) to interact
+ * with a triangle mesh.
+ *
+ * In case you don't need a GUI, you can drop the "Drawable" prefix from the mesh data type.
+ * What you will get is a lighter yet fully operational mesh data structure, just
+ * without the burden of OpenGL code necessary for rendering!
+ *
+ * Enjoy!
+*/
+
 #include <QApplication>
 #include <cinolib/meshes/meshes.h>
 #include <cinolib/gui/qt/qt_gui_tools.h>
