@@ -22,7 +22,7 @@ cp -r internship_examples ../cinolib/examples/
 
 ```bash
 wget https://gforge.inria.fr/frs/download.php/file/38234/graphite3_1.7.3.zip
-unzip geogram_1.7.6.zip
+unzip graphite3_1.7.3.zip
 cd graphite3_1.7.3
 sudo apt-get install xorg-dev libglu1-mesa-dev
 ./configure.sh
