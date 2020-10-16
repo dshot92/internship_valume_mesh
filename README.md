@@ -25,9 +25,7 @@ wget https://gforge.inria.fr/frs/download.php/file/38234/graphite3_1.7.3.zip
 unzip graphite3_1.7.3.zip
 cd graphite3_1.7.3
 sudo apt-get install xorg-dev libglu1-mesa-dev
-./configure.sh
-cd build/Linux-gcc-dynamic-release
-make
+./make_it.sh
 ```
 
 ##### Extra - Create Icon for Launch-bar
