@@ -893,8 +893,6 @@ std::vector<uint> Tetmesh<M,V,E,F,P>::poly_faces_opposite_to(const uint pid, con
     return this->poly_e2f(pid, this->poly_edge_opposite_to(pid,eid));
 }
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
 template<class M, class V, class E, class F, class P>
 CINO_INLINE
 void Tetmesh<M,V,E,F,P>::edge_label_manifold_fix(const uint eid)
@@ -930,12 +928,34 @@ void Tetmesh<M,V,E,F,P>::edge_label_manifold_fix(const uint eid)
 
     auto new_vid = this->edge_split(eid, 0.5);
 
+    components = this->v2p_label_cc(new_vid);
+    // Calculate Unique Labels
+    for(auto comp : components){
+        for(auto pid : comp){
+            int curr_label = this->poly_data(pid).label;
+            auto query = labels.find(curr_label);
+            if(query == labels.end()){
+                labels.insert(std::make_pair(curr_label, 1));
+            }else{
+                query->second++;
+            }
+        }
+    }
+
+    most_pids_label_count = 0;
+    for(auto label : labels ){
+        if(label.second > most_pids_label_count){
+            most_pids_label_count = label.second;
+            most_pids_label = label.first;
+        }
+    }
+
     for(auto pid : this->adj_v2p(new_vid)){
         this->poly_data(pid).label = most_pids_label;
     }
-}
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+}
 
 template<class M, class V, class E, class F, class P>
 CINO_INLINE
@@ -958,15 +978,12 @@ void Tetmesh<M,V,E,F,P>::vid_label_manifold_fix(const uint vid)
 
     int most_pids_label = this->poly_data(components[0].at(0)).label;
     int most_pids_label_count = 0;
+    most_pids_label_count = 0;
     for(auto label : labels ){
         if(label.second > most_pids_label_count){
             most_pids_label_count = label.second;
             most_pids_label = label.first;
         }
-    }
-
-    for(auto pid : this->adj_v2p(vid)){
-        this->poly_data(pid).label = most_pids_label;
     }
 
     //Cutting
@@ -979,6 +996,7 @@ void Tetmesh<M,V,E,F,P>::vid_label_manifold_fix(const uint vid)
     std::unordered_set<uint> visited;
     visited.insert(e_link.front());
 
+    std::unordered_set<uint> new_vids;
     while(!q.empty())
     {
         uint curr = q.front();
@@ -992,13 +1010,18 @@ void Tetmesh<M,V,E,F,P>::vid_label_manifold_fix(const uint vid)
             if(CONTAINS(edge_set, nbr) && !CONTAINS(visited, nbr))
             {
                 visited.insert(nbr);
-                this->edge_split(nbr, 0.5);
+                new_vids.insert(this->edge_split(nbr, 0.5));
                 q.push(nbr);
             }
         }
     }
 
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    for(auto v : new_vids){
+        for(auto pid : this->adj_v2p(v)){
+            this->poly_data(pid).label = most_pids_label;
+        }
+    }
+
 
 }
 
