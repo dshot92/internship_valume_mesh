@@ -893,6 +893,8 @@ std::vector<uint> Tetmesh<M,V,E,F,P>::poly_faces_opposite_to(const uint pid, con
     return this->poly_e2f(pid, this->poly_edge_opposite_to(pid,eid));
 }
 
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 template<class M, class V, class E, class F, class P>
 CINO_INLINE
 void Tetmesh<M,V,E,F,P>::edge_label_manifold_fix(const uint eid)
@@ -956,6 +958,8 @@ void Tetmesh<M,V,E,F,P>::edge_label_manifold_fix(const uint eid)
 
 
 }
+
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 template<class M, class V, class E, class F, class P>
 CINO_INLINE

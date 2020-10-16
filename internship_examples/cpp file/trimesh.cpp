@@ -676,6 +676,8 @@ void Trimesh<M,V,E,P>::vert_weights_cotangent(const uint vid, std::vector<std::p
     }
 }
 
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
 template<class M, class V, class E, class P>
 CINO_INLINE
 void Trimesh<M,V,E,P>::vid_label_manifold_fix(const uint vid)

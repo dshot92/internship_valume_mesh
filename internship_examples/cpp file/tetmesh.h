@@ -138,6 +138,8 @@ class Tetmesh : public AbstractPolyhedralMesh<M,V,E,F,P>
         uint              poly_split            (const uint pid, const uint vid);
         void              polys_split           (const std::vector<uint> & pids);        
 
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
         void              edge_label_manifold_fix(const uint eid);
         void              vid_label_manifold_fix(const uint vid);
 
