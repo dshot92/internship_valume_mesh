@@ -18,11 +18,27 @@ cd internship_volume_mesh
 cp -r internship_examples ../cinolib/examples/
 ```
 
+
+
+### Qt-Creator
+
+```bash
+wget https://download.qt.io/official_releases/online_installers/qt-unified-linux-x64-online.run
+chmod +x qt-unified-linux-x64-online.run
+
+// install precedure
+
+sudo apt-get install libxcb-randr0-dev libxcb-xtest0-dev libxcb-xinerama0-dev libxcb-shape0-dev libxcb-xkb-dev
+```
+
+
+
 ### Graphite3 1.7.3 Install
 
 ```bash
 wget https://gforge.inria.fr/frs/download.php/file/38234/graphite3_1.7.3.zip
 unzip graphite3_1.7.3.zip
+rm graphite3_1.7.3.zip
 cd graphite3_1.7.3
 sudo apt-get install xorg-dev libglu1-mesa-dev
 ./make_it.sh
@@ -41,8 +57,8 @@ Input paths:
 Type=Application
 Terminal=true
 Name=Graphite
-Icon=//home/dshot/Downloads/graphite3_1.7.3/GraphiteThree/lib/icons/logos/graphite-window-icon.xpm
-Exec=/home/dshot/Downloads/graphite3_1.7.3/bin/graphite.sh
+Icon=//home/dshot/graphite3_1.7.3/GraphiteThree/lib/icons/logos/graphite-window-icon.xpm
+Exec=/home/dshot/graphite3_1.7.3/bin/graphite.sh
 ```
 
 Icon is created and can be set as favorite.
