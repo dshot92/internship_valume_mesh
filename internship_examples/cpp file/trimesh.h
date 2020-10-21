@@ -122,11 +122,7 @@ class Trimesh : public AbstractPolygonMesh<M,V,E,P>
         uint                poly_split         (const uint pid); // uses centroid as default split point
         uint                poly_split         (const uint pid, const vec3d & p);
 
-
-//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
         void                vid_label_manifold_fix(const uint vid);
-
 
         using AbstractMesh<M,V,E,P>::poly_edge_id;    // avoid hiding poly_ege_id(pid,vid0,vid1)
         using AbstractPolygonMesh<M,V,E,P>::poly_add; // avoid hiding poly_add(p)

@@ -528,7 +528,6 @@ void AbstractMesh<M,V,E,P>::vert_weights_uniform(const uint vid, std::vector<std
     }
 }
 
-
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 template<class M, class V, class E, class P>
@@ -1403,14 +1402,15 @@ template<class M, class V, class E, class P>
 CINO_INLINE
 bool AbstractMesh<M,V,E,P>::vert_is_manifold_cluster(const uint vid) const
 {
+    /* Detect Manifoldness of a VID in relation to it adjacents Polys labels */
+
+    std::vector<std::vector<uint>> components = this->v2p_label_cc(vid); // Polys Connected Components around VID
+    std::unordered_map<int, int> labels;
+
     std::vector<uint> p_link = this->adj_v2p(vid);
     std::unordered_set<uint> poly_set(p_link.begin(), p_link.end());
 
-    std::vector<std::vector<uint>> components;
-    std::unordered_map<int, int> labels;
-
     // If all poly in p_link have the same label, vid is completely int eh cluster and cannot be non-manifold
-
     int first_label = this->poly_data(p_link.at(0)).label;
     bool inside_cluster = true;
     for(auto pid : p_link){
@@ -1423,9 +1423,7 @@ bool AbstractMesh<M,V,E,P>::vert_is_manifold_cluster(const uint vid) const
     }
     else{
 
-        components = this->v2p_label_cc(vid);
-
-        /// Calculate number of distinct lables
+        // Calculate number of distinct lables with a map
         for(auto comp : components){
             int curr_label = this->poly_data(comp[0]).label;
 
@@ -1438,6 +1436,8 @@ bool AbstractMesh<M,V,E,P>::vert_is_manifold_cluster(const uint vid) const
             }
         }
 
+        // VID is manifold if the number of Connected Components is as big as the number of labels
+        // Return value in NEGATED, as is called checking for MANIFOLDNESS
         return !( components.size() > labels.size());
     }
 }
@@ -1448,13 +1448,22 @@ template<class M, class V, class E, class P>
 CINO_INLINE
 std::vector<std::vector<uint>> AbstractMesh<M,V,E,P>::v2p_label_cc(const uint vid) const
 {
+    /* Function returns Connected Componets of Polys around a VID */
+
+    // Pids of all polys adjacent to VID
     std::vector<uint> p_link = this->adj_v2p(vid);
-    std::unordered_set<uint> poly_set(p_link.begin(), p_link.end());
+    std::set<uint> poly_set(p_link.begin(), p_link.end());
 
-    uint index = 0;
     std::vector<std::vector<uint>> components;
-    std::unordered_map<int, int> labels;
+    std::map<int, int> labels;
 
+    /* Algoritmh idea:
+     * for each pid in p_link:
+     *      if already connected to a components : skip it
+     *      else
+     *          BSF around it on poly_set pids
+     *          add vector of BFS search of to components
+    */
     for(auto pid : p_link){
         bool connected = false;
         int label = this->poly_data(pid).label;
@@ -1464,15 +1473,22 @@ std::vector<std::vector<uint>> AbstractMesh<M,V,E,P>::v2p_label_cc(const uint vi
         }else{
             query->second++;
         }
+
+        // Check if already present in some other pid connected component of poly set
         for (auto comp : components){
             if(CONTAINS_VEC(comp, pid)){
                connected = true;
             }
         }
-        std::unordered_set<uint> start;
+
+        // set with non connected pid sto start BFS search
+        std::set<uint> start;
         start.insert(pid);
+
+        // If not in a componets, BFS around it
         if(!connected){
-            ++index;
+
+            // Get pid label, if new add it to label map
             int curr_label = this->poly_data(pid).label;
             auto query = labels.find(curr_label);
             if(query == labels.end()){
@@ -1488,6 +1504,7 @@ std::vector<std::vector<uint>> AbstractMesh<M,V,E,P>::v2p_label_cc(const uint vi
             std::vector<uint> visited;
             visited.push_back(*start.begin());
 
+            // BFS
             while(!q.empty()){
                 uint curr = q.front();
                 q.pop();
@@ -1501,10 +1518,12 @@ std::vector<std::vector<uint>> AbstractMesh<M,V,E,P>::v2p_label_cc(const uint vi
                     }
                 }
             }
+            // Add BFS result of pids to Connected Components vector
             components.push_back(visited);
         }
     }
 
+    // Return Connected Components
     return components;
 }
 
@@ -1514,15 +1533,27 @@ template<class M, class V, class E, class P>
 CINO_INLINE
 std::vector<std::vector<uint>> AbstractMesh<M,V,E,P>::e2p_label_cc(const uint eid) const
 {
-    std::vector<uint> p_link = this->adj_e2p(eid);
-    std::unordered_set<uint> poly_set(p_link.begin(), p_link.end());
+    /* Function returns Connected Componets of Polys around a EID */
 
-    uint index = 0;
+    // Pids of all polys adjacent to EID
+    std::vector<uint> e_link = this->adj_e2p(eid);
+    std::set<uint> poly_set(e_link.begin(), e_link.end());
+
     std::vector<std::vector<uint>> components;
-    std::unordered_map<int, int> labels;
+    std::map<int, int> labels;
 
-    for(auto pid : p_link){
+    /* Algoritmh idea:
+     * for each pid in e_link:
+     *      if already connected to a components : skip it
+     *      else
+     *          BSF around it on poly_set pids
+     *          add vector of BFS search of to components
+    */
+
+    for(auto pid : e_link){
+
         bool connected = false;
+
         int label = this->poly_data(pid).label;
         auto query = labels.find(label);
         if(query == labels.end()){
@@ -1530,15 +1561,22 @@ std::vector<std::vector<uint>> AbstractMesh<M,V,E,P>::e2p_label_cc(const uint ei
         }else{
             query->second++;
         }
+
+        // Check if already present in some other pid connected component of poly set
         for (auto comp : components){
             if(CONTAINS_VEC(comp, pid)){
                connected = true;
             }
         }
-        std::unordered_set<uint> start;
+
+        // set with non connected pid sto start BFS search
+        std::set<uint> start;
         start.insert(pid);
+
+        // If not in a componets, BFS around it
         if(!connected){
-            ++index;
+
+            // Get pid label, if new add it to label map
             int curr_label = this->poly_data(pid).label;
             auto query = labels.find(curr_label);
             if(query == labels.end()){
@@ -1554,6 +1592,7 @@ std::vector<std::vector<uint>> AbstractMesh<M,V,E,P>::e2p_label_cc(const uint ei
             std::vector<uint> visited;
             visited.push_back(*start.begin());
 
+            // BFS
             while(!q.empty()){
                 uint curr = q.front();
                 q.pop();
@@ -1567,13 +1606,12 @@ std::vector<std::vector<uint>> AbstractMesh<M,V,E,P>::e2p_label_cc(const uint ei
                     }
                 }
             }
+            // Add BFS result of pids to Connected Components vector
             components.push_back(visited);
         }
     }
-
+    // Return Connected Components
     return components;
 }
 
 }
-
-

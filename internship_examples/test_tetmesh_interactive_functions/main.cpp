@@ -30,19 +30,19 @@ int main(int argc, char **argv)
 //    mesh_file = "blub_triangulated_tet.mesh";         //  344 NON manifold points -> 0 points
 //    mesh_file = "cup_tet.mesh";                       //  332 NON manifold points -> 0 points
 //    mesh_file = "Laurana_tet.mesh";                   //  553 NON manifold points -> 0 points
-//    mesh_file = "bunny_tet.mesh";                     //  701 NON manifold points -> 0 points
-//    mesh_file = "maxFace_tet.mesh";                   //  513 NON manifold points -> 0 points
-//    mesh_file = "part.mesh";                          //  478 NON manifold points -> 0 points
-//    mesh_file = "sphere.mesh";                        //   49 NON manifold points -> 0 points
-//    mesh_file = "teapot_tet.mesh";                    //   43 NON manifold points -> 0 points
-//    mesh_file = "cubespikes_tet.mesh";                //   39 NON manifold points -> 0 points
-//    mesh_file = "spot_triangulated_tet.mesh";         //   32 NON manifold points -> 0 points
-//    mesh_file = "p01_tet.mesh";                       //   25 NON manifold points -> 0 points
+//    mesh_file = "bunny_tet.mesh";                     //  585 NON manifold points -> 0 points
+//    mesh_file = "maxFace_tet.mesh";                   //  403 NON manifold points -> 0 points
+//    mesh_file = "part.mesh";                          //  320 NON manifold points -> 0 points
+//    mesh_file = "sphere.mesh";                        //  162 NON manifold points -> 0 points
+//    mesh_file = "teapot_tet.mesh";                    //  200 NON manifold points -> 0 points
+//    mesh_file = "cubespikes_tet.mesh";                //  194 NON manifold points -> 0 points
+//    mesh_file = "spot_triangulated_tet.mesh";         //  195 NON manifold points -> 0 points
+//    mesh_file = "p01_tet.mesh";                       //   41 NON manifold points -> 0 points
 //    mesh_file = "3holes_tet.mesh";                    //   25 NON manifold points -> 0 points
-//    mesh_file = "bamboo_pen_tet.mesh";                //   20 NON manifold points -> 0 points
-//    mesh_file = "torus_tet.mesh";                     //   18 NON manifold points -> 0 points
-//    mesh_file = "cyl248.mesh";                        //    5 NON manifold points -> 0 points
-//    mesh_file = "cube86.mesh";                        //    1 NON manifold points -> 0 points
+//    mesh_file = "bamboo_pen_tet.mesh";                //   74 NON manifold points -> 0 points
+//    mesh_file = "torus_tet.mesh";                     //  186 NON manifold points -> 0 points
+//    mesh_file = "cyl248.mesh";                        //   42 NON manifold points -> 0 points
+//    mesh_file = "cube86.mesh";                        //    2 NON manifold points -> 0 points
 
     /// Hexlab conversion to tetmesh
 //    mesh_file = "hexlab2tet/BU_remesh_hex_tet.mesh";  //  284 NON manifold points -> 0 points
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 //    mesh_file = "hexlab2tet/Stab3_refine3_tet.mesh";  //    1 NON manifold points -> 0 points
 
     ///Testing Giammi
-//    mesh_file = "testing/dino.mesh";                  //  531 NON manifold points -> 0 points
+    mesh_file = "testing/dino.mesh";                  //  531 NON manifold points -> 0 points
 //    mesh_file = "testing/kiss.mesh";                  //  517 NON manifold points -> 0 points
 //    mesh_file = "testing/buste.mesh";                 //  351 NON manifold points -> 0 points
 //    mesh_file = "testing/armadillo.mesh";             //  256 NON manifold points -> 0 points
@@ -79,6 +79,7 @@ int main(int argc, char **argv)
     m.translate(-m.centroid());
     m.updateGL();
 
+    // Labelling Clusters
     double x1 = m.bbox().delta_x() / 4;
     double y1 = m.bbox().delta_y() / 4;
     double z1 = m.bbox().delta_z() / 4;
@@ -115,8 +116,8 @@ int main(int argc, char **argv)
     cout << "Number of labels : " << lab.size() << endl;
 
     vector<DrawableSphere> points;
-    set<uint> edges_list;
     set<uint> fixed_vids;
+    set<uint> fixed_edges;
 
     uint verts = m.num_verts();
     uint verts_before = verts;
@@ -137,29 +138,34 @@ int main(int argc, char **argv)
 
     uint v0, v1;
     set<uint> poly_edges;
+
+    // Check every vert of mesh
+    // for each vertex get edges and check edge vertices
+
     for(uint mesh_vid = 0; mesh_vid < verts ; ++mesh_vid){
 
-//        cout << mesh_vid << " of " << verts << endl;
-
+        // Get edges incident to vid and cycle over them
         poly_edges.clear();
         for(auto v : m.adj_v2e(mesh_vid)){
             poly_edges.insert(v);
         }
 
         for(auto eid : poly_edges){
+
+            // Verts of eid
             v0 = m.edge_vert_id(eid, 0);
             v1 = m.edge_vert_id(eid, 1);
 
             // Case EDGE non manifold
             if ( !m.vert_is_manifold_cluster(v0) &&
                  !m.vert_is_manifold_cluster(v1) &&
-                 DOES_NOT_CONTAIN(edges_list, eid) &&
-                 DOES_NOT_CONTAIN(fixed_vids, v0) &&
-                 DOES_NOT_CONTAIN(fixed_vids, v1)
+                 DOES_NOT_CONTAIN(fixed_edges, eid)
                  ){
 
-                edges_list.insert(eid);
+                // add edge to set of fixed edges
+                fixed_edges.insert(eid);
 
+                // fix non manifold eid
                 m.edge_label_manifold_fix(eid);
             }
             else{
@@ -168,17 +174,20 @@ int main(int argc, char **argv)
                 if ( !m.vert_is_manifold_cluster(v0) &&
                      DOES_NOT_CONTAIN(fixed_vids, v0)){
 
+                    // add it set of fixed vids
                     fixed_vids.insert(v0);
 
+                    // fix non manifold vid
                     m.vid_label_manifold_fix(v0);
-                    m.edge_split(eid);
                 }
 
                 if ( !m.vert_is_manifold_cluster(v1) &&
                      DOES_NOT_CONTAIN(fixed_vids, v1)){
 
+                    // add it set of fixed vids
                     fixed_vids.insert(v1);
 
+                    // fix non manifold vid
                     m.vid_label_manifold_fix(v1);
                 }
             }
@@ -188,6 +197,8 @@ int main(int argc, char **argv)
         verts = m.num_verts();
     }
 
+    // Edge split updated normals only if the new face are on the surface
+    // It enough do this once after all vertices are fixed
     m.update_normals();
     m.poly_color_wrt_label();
     m.updateGL();
@@ -264,6 +275,7 @@ int main(int argc, char **argv)
     Profiler profiler;
     gui.callback_mouse_press = [&](GLcanvas *c, QMouseEvent *e)
     {
+        // Fix non manifold edge
         if (e->modifiers() == Qt::ShiftModifier)
         {
             vec3d p;
@@ -315,6 +327,7 @@ int main(int argc, char **argv)
 
         }
 
+        // Fix non manifold Vid, os cut around manifold ones
         if (e->modifiers() == Qt::ControlModifier )
         {
             vec3d p;
@@ -327,30 +340,45 @@ int main(int argc, char **argv)
 
                 cout << " ____________________________" << endl;
                 cout << "VID - " << vid << endl;
-                bool manifold = !m.vert_is_manifold_cluster(vid);
+                bool manifold = m.vert_is_manifold_cluster(vid);
                 cout << ( manifold ? "Manifold - FALSE" : "Manifold - TRUE") << endl;
 
+                if(!manifold){
+                    m.vid_label_manifold_fix(vid);
+                }
+                else{
+                    {
+                        //Cutting
+                        std::vector<uint> e_link = m.adj_v2e(vid);
+                        std::unordered_set<uint> edge_set(e_link.begin(), e_link.end());
 
-//                vector<vector<uint>> components = m.v2p_label_cc(vid);
-//                map<uint,int> labels;
-//                // Pretty print for Connected Componets
-//                {
-//                    int i = 0;
-//                    std::cout << "======================================" << std::endl;
-//                    std::cout << "vid: " + std::__cxx11::to_string(vid)  +
-//                                 "  -  Comp #: " + std::__cxx11::to_string(components.size()) +
-//                                 "  -  Labels #: " + std::__cxx11::to_string(labels.size()) << std::endl;
+                        std::queue<uint> q;
+                        q.push(e_link.front());
 
-//                    for (auto comp : components){
-//                        std::cout << "Component[" + std::__cxx11::to_string(i) + "] pids: " << std::endl;
-//                        for(auto pid : comp){
-//                            std::cout << std::__cxx11::to_string(pid) + "\t -> Label: " + std::__cxx11::to_string(m.poly_data(pid).label) << std::endl;
-//                        }
-//                        ++i;
-//                    }
-//                }
+                        std::unordered_set<uint> visited;
+                        visited.insert(e_link.front());
 
-                m.vid_label_manifold_fix(vid);
+                        std::unordered_set<uint> new_vids;
+                        while(!q.empty())
+                        {
+                            uint curr = q.front();
+                            q.pop();
+
+                            assert(CONTAINS(visited, curr));
+
+                            for(uint nbr : m.adj_e2e(curr))
+                            {
+                                // still in the link of vid, but not visited yet
+                                if(CONTAINS(edge_set, nbr) && !CONTAINS(visited, nbr))
+                                {
+                                    visited.insert(nbr);
+                                    new_vids.insert(m.edge_split(nbr, 0.5));
+                                    q.push(nbr);
+                                }
+                            }
+                        }
+                    }
+                }
 
                 // Update non manifold points
                 {
@@ -374,6 +402,49 @@ int main(int argc, char **argv)
 
                     cout << ((points.size() > 0) ? ANSI_fg_color_red : ANSI_fg_color_default) << "VIDs NON manifold after  : " << points.size() << ANSI_fg_color_default << endl;
 
+                    m.update_normals();
+                    m.poly_color_wrt_label();
+                    m.updateGL();
+                    c->updateGL();
+                }
+            }
+        }
+
+        // Relabel picked Pid with label == 0
+        if (e->modifiers() == Qt::AltModifier )
+        {
+            vec3d p;
+            vec2i click(e->x(), e->y());
+            if (c->unproject(click, p)) // transform click in a 3d point
+            {
+                profiler.push("Pick Vertex");
+                uint pid = m.pick_poly(p);
+                profiler.pop();
+
+                cout << "PID - " << pid << endl;
+                m.poly_data(pid).label = 0;
+
+                // Update non manifold points
+                {
+                    for(uint i = 0; i < points.size() ; ++i){
+                        gui.pop(&points[i]);
+                    }
+                    points.clear();
+                    uint verts = m.num_verts();
+                    for(uint vid = 0; vid < verts ; ++vid){
+                        if( !m.vert_is_manifold_cluster(vid)){
+                            //Push sphere to GUI
+                            DrawableSphere sphere(m.vert(vid));
+                            points.push_back(sphere);
+                        }
+                    }
+                    for(uint i = 0; i < points.size() ; ++i){
+                        points[i].size = 0.1;
+                        points[i].color = Color(1,0,0,0.5);
+                        gui.push_obj(&points[i]);
+                    }
+
+                    cout << ((points.size() > 0) ? ANSI_fg_color_red : ANSI_fg_color_default) << "VIDs NON manifold after  : " << points.size() << ANSI_fg_color_default << endl;
                     m.update_normals();
                     m.poly_color_wrt_label();
                     m.updateGL();

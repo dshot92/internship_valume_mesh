@@ -295,10 +295,10 @@ class AbstractMesh
 
         //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-                // Testing trimesh and tetmesh
-                bool             vert_is_manifold_cluster   (const uint vid) const;
-                std::vector<std::vector<uint>> v2p_label_cc(const uint vid) const;
-                std::vector<std::vector<uint>> e2p_label_cc(const uint eid) const;
+            // Testing trimesh and tetmesh
+            bool             vert_is_manifold_cluster   (const uint vid) const;
+            std::vector<std::vector<uint>> v2p_label_cc(const uint vid) const;
+            std::vector<std::vector<uint>> e2p_label_cc(const uint eid) const;
 
 };
 

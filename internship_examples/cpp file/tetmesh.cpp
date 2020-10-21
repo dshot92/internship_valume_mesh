@@ -42,6 +42,7 @@
 #include <cinolib/cot.h>
 #include <cinolib/symbols.h>
 #include <cinolib/io/io_utilities.h>
+#include <queue>
 
 namespace cinolib
 {
@@ -245,10 +246,10 @@ uint Tetmesh<M,V,E,F,P>::edge_split(const uint eid, const vec3d & p)
     for(uint fid : this->adj_e2f(eid))
     {
         uint vopp = this->face_vert_opposite_to(fid,eid);
-        int f0   = this->face_id({vid0,new_vid,vopp}); assert(f0>=0);
-        int f1   = this->face_id({vid1,new_vid,vopp}); assert(f1>=0);
-        this->face_data(f0) = this->face_data(fid);
-        this->face_data(f1) = this->face_data(fid);
+         int f0   = this->face_id({vid0,new_vid,vopp}); assert(f0>=0);
+         int f1   = this->face_id({vid1,new_vid,vopp}); assert(f1>=0);
+         this->face_data(f0) = this->face_data(fid);
+         this->face_data(f1) = this->face_data(fid);
     }
 
     if(this->mesh_data().update_normals && this->vert_is_on_srf(new_vid)) this->update_v_normal(new_vid);
@@ -899,8 +900,10 @@ template<class M, class V, class E, class F, class P>
 CINO_INLINE
 void Tetmesh<M,V,E,F,P>::edge_label_manifold_fix(const uint eid)
 {
+    // Get Components
     std::vector<std::vector<uint>> components = this->e2p_label_cc(eid);
     std::unordered_map<int, int> labels;
+
     // Calculate Unique Labels
     for(auto comp : components){
         for(auto pid : comp){
@@ -914,36 +917,9 @@ void Tetmesh<M,V,E,F,P>::edge_label_manifold_fix(const uint eid)
         }
     }
 
-    int most_pids_label = this->poly_data(components[0].at(0)).label;
+    // Get most common label
     int most_pids_label_count = 0;
-
-    // Calculate Unique Labels
-    for(auto pid : this->adj_e2p(eid)){
-        int curr_label = this->poly_data(pid).label;
-        auto query = labels.find(curr_label);
-        if(query == labels.end()){
-            labels.insert(std::make_pair(curr_label, 1));
-        }else{
-            query->second++;
-        }
-    }
-
-    auto new_vid = this->edge_split(eid, 0.5);
-
-    components = this->v2p_label_cc(new_vid);
-    // Calculate Unique Labels
-    for(auto comp : components){
-        for(auto pid : comp){
-            int curr_label = this->poly_data(pid).label;
-            auto query = labels.find(curr_label);
-            if(query == labels.end()){
-                labels.insert(std::make_pair(curr_label, 1));
-            }else{
-                query->second++;
-            }
-        }
-    }
-
+    int most_pids_label = this->poly_data(components[0].at(0)).label;
     most_pids_label_count = 0;
     for(auto label : labels ){
         if(label.second > most_pids_label_count){
@@ -952,11 +928,13 @@ void Tetmesh<M,V,E,F,P>::edge_label_manifold_fix(const uint eid)
         }
     }
 
+    // Cut around EID
+    auto new_vid = this->edge_split(eid, 0.5);
+
+    // Apply New labels
     for(auto pid : this->adj_v2p(new_vid)){
         this->poly_data(pid).label = most_pids_label;
     }
-
-
 }
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -965,8 +943,10 @@ template<class M, class V, class E, class F, class P>
 CINO_INLINE
 void Tetmesh<M,V,E,F,P>::vid_label_manifold_fix(const uint vid)
 {
+    // Get connected Compoents
     std::vector<std::vector<uint>> components = this->v2p_label_cc(vid);
     std::unordered_map<int, int> labels;
+
     // Calculate Unique Labels
     for(auto comp : components){
         for(auto pid : comp){
@@ -980,8 +960,9 @@ void Tetmesh<M,V,E,F,P>::vid_label_manifold_fix(const uint vid)
         }
     }
 
-    int most_pids_label = this->poly_data(components[0].at(0)).label;
+    // Get most common label
     int most_pids_label_count = 0;
+    int most_pids_label = this->poly_data(components[0].at(0)).label;
     most_pids_label_count = 0;
     for(auto label : labels ){
         if(label.second > most_pids_label_count){
@@ -990,7 +971,7 @@ void Tetmesh<M,V,E,F,P>::vid_label_manifold_fix(const uint vid)
         }
     }
 
-    //Cutting
+    // Cut Around vid
     std::vector<uint> e_link = this->adj_v2e(vid);
     std::unordered_set<uint> edge_set(e_link.begin(), e_link.end());
 
@@ -1020,12 +1001,12 @@ void Tetmesh<M,V,E,F,P>::vid_label_manifold_fix(const uint vid)
         }
     }
 
+    // Recolor pids around cutted edges
     for(auto v : new_vids){
         for(auto pid : this->adj_v2p(v)){
             this->poly_data(pid).label = most_pids_label;
         }
     }
-
 
 }
 

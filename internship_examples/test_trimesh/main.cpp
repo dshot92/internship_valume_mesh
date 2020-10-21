@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     QApplication a(argc, argv);
     string mesh;
 
-//    mesh = "/mesh/trimesh/torus.obj";                 // 56 NON manifold points -> 0 points
+    mesh = "/mesh/trimesh/torus.obj";                 // 56 NON manifold points -> 0 points
 //    mesh = "/mesh/trimesh/blub_triangulated.obj";     // 49 NON manifold points -> 0 points
 //    mesh = "/mesh/trimesh/casting.off";               // 26 NON manifold points -> 0 points
 //    mesh = "/mesh/trimesh/maxFace.obj";               // 16 NON manifold points -> 0 points
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     m.translate(-m.centroid());
     m.updateGL();
 
-    // Labelling
+    // Labelling Clusters
     {
         double x1 = m.bbox().delta_x() / 4;
         double y1 = m.bbox().delta_y() / 4;
@@ -108,15 +108,20 @@ int main(int argc, char **argv)
     // for testing
     if ( !fix ) verts=0;
 
+    // Check every vert of mesh
     for(uint vid = 0; vid < verts ; ++vid){
         if( !m.vert_is_manifold_cluster(vid)){
 
-            // Fix Non manifold VIDs
+            // Fix Non manifold vertss
             m.vid_label_manifold_fix(vid);
 
         }
+
+        // Update number of mesh vertices
         verts = m.num_verts();
     }
+
+    // Apply color labels
     m.poly_color_wrt_label();
     m.updateGL();
 
@@ -124,6 +129,7 @@ int main(int argc, char **argv)
     // Push mesh before
     gui.push_obj(&m);
 
+    // Drawables sphere on non manifold vertices
     vector<DrawableSphere> points;
 
     // Recalculare Non manifold points AFTER
@@ -172,7 +178,7 @@ int main(int argc, char **argv)
         cout << "Polys  Added:\t" << polys - polys_before << endl;
     }
 
-    // GUI pick VID
+    // GUI Information
     gui.push_marker(vec2i(10, gui.height()-20), "CMD + click to select a vertex", Color::BLACK(), 12, 0);
 
     gui.push_marker(vec2i(10, 50), "VIDs NON manifold Before : " + to_string( non_manifold_vid_before ), Color::BLACK(), 12, 0);

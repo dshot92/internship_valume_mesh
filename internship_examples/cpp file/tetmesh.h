@@ -136,7 +136,7 @@ class Tetmesh : public AbstractPolyhedralMesh<M,V,E,F,P>
         uint              poly_split            (const uint pid, const vec3d & p);
         uint              poly_split            (const uint pid, const std::vector<double> & bc = { 0.25, 0.25, 0.25, 0.25 });
         uint              poly_split            (const uint pid, const uint vid);
-        void              polys_split           (const std::vector<uint> & pids);        
+        void              polys_split           (const std::vector<uint> & pids);
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
