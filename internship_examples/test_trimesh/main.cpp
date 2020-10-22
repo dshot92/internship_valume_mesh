@@ -17,6 +17,18 @@
 #include <cinolib/drawable_sphere.h>
 #include <cinolib/geometry/vec3.h>
 #include <cinolib/profiler.h>
+#include <chrono>
+
+inline static std::chrono::time_point<std::chrono::system_clock> startChrono()
+{
+    return std::chrono::system_clock::now();
+}
+
+inline double stopChrono(std::chrono::time_point<std::chrono::system_clock> &start)
+{
+    auto time = std::chrono::system_clock::now() - start;
+    return std::chrono::duration <double, std::milli> (time).count() / 1000;
+}
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -108,6 +120,7 @@ int main(int argc, char **argv)
     // for testing
     if ( !fix ) verts=0;
 
+    auto t = startChrono();
     // Check every vert of mesh
     for(uint vid = 0; vid < verts ; ++vid){
         if( !m.vert_is_manifold_cluster(vid)){
@@ -120,6 +133,8 @@ int main(int argc, char **argv)
         // Update number of mesh vertices
         verts = m.num_verts();
     }
+    double time = stopChrono(t);
+    cout << "Fixing Time: " << time << endl;
 
     // Apply color labels
     m.poly_color_wrt_label();

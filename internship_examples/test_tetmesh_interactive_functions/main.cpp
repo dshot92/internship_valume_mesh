@@ -14,6 +14,18 @@
 #include <cinolib/gui/qt/qt_gui_tools.h>
 #include <cinolib/drawable_sphere.h>
 #include <cinolib/profiler.h>
+#include <chrono>
+
+inline static std::chrono::time_point<std::chrono::system_clock> startChrono()
+{
+    return std::chrono::system_clock::now();
+}
+
+inline double stopChrono(std::chrono::time_point<std::chrono::system_clock> &start)
+{
+    auto time = std::chrono::system_clock::now() - start;
+    return std::chrono::duration <double, std::milli> (time).count() / 1000;
+}
 
 int main(int argc, char **argv)
 {
@@ -26,7 +38,7 @@ int main(int argc, char **argv)
     // Graphite to Convert trimesh to tetmesh
     /// http://alice.loria.fr/software/geogram/doc/html/index.html
 
-//    mesh_file = "korean_tet.mesh";                    // 2120 NON manifold points -> 0 points
+    mesh_file = "korean_tet.mesh";                    // 2120 NON manifold points -> 0 points
 //    mesh_file = "blub_triangulated_tet.mesh";         //  344 NON manifold points -> 0 points
 //    mesh_file = "cup_tet.mesh";                       //  332 NON manifold points -> 0 points
 //    mesh_file = "Laurana_tet.mesh";                   //  553 NON manifold points -> 0 points
@@ -57,7 +69,7 @@ int main(int argc, char **argv)
 //    mesh_file = "hexlab2tet/Stab3_refine3_tet.mesh";  //    1 NON manifold points -> 0 points
 
     ///Testing Giammi
-    mesh_file = "testing/dino.mesh";                  //  531 NON manifold points -> 0 points
+//    mesh_file = "testing/dino.mesh";                  //  531 NON manifold points -> 0 points
 //    mesh_file = "testing/kiss.mesh";                  //  517 NON manifold points -> 0 points
 //    mesh_file = "testing/buste.mesh";                 //  351 NON manifold points -> 0 points
 //    mesh_file = "testing/armadillo.mesh";             //  256 NON manifold points -> 0 points
@@ -142,6 +154,8 @@ int main(int argc, char **argv)
     // Check every vert of mesh
     // for each vertex get edges and check edge vertices
 
+    auto t = startChrono();
+
     for(uint mesh_vid = 0; mesh_vid < verts ; ++mesh_vid){
 
         // Get edges incident to vid and cycle over them
@@ -196,6 +210,9 @@ int main(int argc, char **argv)
         // Update mesh to add the new vid to be checked
         verts = m.num_verts();
     }
+
+    double time = stopChrono(t);
+    cout << "Fixing Time: " << time << endl;
 
     // Edge split updated normals only if the new face are on the surface
     // It enough do this once after all vertices are fixed
