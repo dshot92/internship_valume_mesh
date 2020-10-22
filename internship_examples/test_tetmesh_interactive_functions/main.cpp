@@ -11,21 +11,10 @@
 
 #include <QApplication>
 #include <cinolib/meshes/meshes.h>
+#include <cinolib/fix_manifold.h>
 #include <cinolib/gui/qt/qt_gui_tools.h>
 #include <cinolib/drawable_sphere.h>
 #include <cinolib/profiler.h>
-#include <chrono>
-
-inline static std::chrono::time_point<std::chrono::system_clock> startChrono()
-{
-    return std::chrono::system_clock::now();
-}
-
-inline double stopChrono(std::chrono::time_point<std::chrono::system_clock> &start)
-{
-    auto time = std::chrono::system_clock::now() - start;
-    return std::chrono::duration <double, std::milli> (time).count() / 1000;
-}
 
 int main(int argc, char **argv)
 {
@@ -38,7 +27,7 @@ int main(int argc, char **argv)
     // Graphite to Convert trimesh to tetmesh
     /// http://alice.loria.fr/software/geogram/doc/html/index.html
 
-    mesh_file = "korean_tet.mesh";                    // 2120 NON manifold points -> 0 points
+//    mesh_file = "korean_tet.mesh";                    // 2120 NON manifold points -> 0 points
 //    mesh_file = "blub_triangulated_tet.mesh";         //  344 NON manifold points -> 0 points
 //    mesh_file = "cup_tet.mesh";                       //  332 NON manifold points -> 0 points
 //    mesh_file = "Laurana_tet.mesh";                   //  553 NON manifold points -> 0 points
@@ -72,7 +61,7 @@ int main(int argc, char **argv)
 //    mesh_file = "testing/dino.mesh";                  //  531 NON manifold points -> 0 points
 //    mesh_file = "testing/kiss.mesh";                  //  517 NON manifold points -> 0 points
 //    mesh_file = "testing/buste.mesh";                 //  351 NON manifold points -> 0 points
-//    mesh_file = "testing/armadillo.mesh";             //  256 NON manifold points -> 0 points
+    mesh_file = "testing/armadillo.mesh";             //  256 NON manifold points -> 0 points
 //    mesh_file = "testing/teapot.mesh";                //  200 NON manifold points -> 0 points
 //    mesh_file = "testing/dog.mesh";                   //  128 NON manifold points -> 0 points
 //    mesh_file = "testing/blech.mesh";                 //   24 NON manifold points -> 0 points
@@ -128,8 +117,7 @@ int main(int argc, char **argv)
     cout << "Number of labels : " << lab.size() << endl;
 
     vector<DrawableSphere> points;
-    set<uint> fixed_vids;
-    set<uint> fixed_edges;
+
 
     uint verts = m.num_verts();
     uint verts_before = verts;
@@ -145,73 +133,11 @@ int main(int argc, char **argv)
         }
     }
 
-    // for testing
-    if ( !fix ) verts=0;
+    auto t = startChrono(); // Start timer
 
-    uint v0, v1;
-    set<uint> poly_edges;
+    fix_non_manifold_verts(m);
 
-    // Check every vert of mesh
-    // for each vertex get edges and check edge vertices
-
-    auto t = startChrono();
-
-    for(uint mesh_vid = 0; mesh_vid < verts ; ++mesh_vid){
-
-        // Get edges incident to vid and cycle over them
-        poly_edges.clear();
-        for(auto v : m.adj_v2e(mesh_vid)){
-            poly_edges.insert(v);
-        }
-
-        for(auto eid : poly_edges){
-
-            // Verts of eid
-            v0 = m.edge_vert_id(eid, 0);
-            v1 = m.edge_vert_id(eid, 1);
-
-            // Case EDGE non manifold
-            if ( !m.vert_is_manifold_cluster(v0) &&
-                 !m.vert_is_manifold_cluster(v1) &&
-                 DOES_NOT_CONTAIN(fixed_edges, eid)
-                 ){
-
-                // add edge to set of fixed edges
-                fixed_edges.insert(eid);
-
-                // fix non manifold eid
-                m.edge_label_manifold_fix(eid);
-            }
-            else{
-
-                // Cases for single Vertex of the edge non manifold
-                if ( !m.vert_is_manifold_cluster(v0) &&
-                     DOES_NOT_CONTAIN(fixed_vids, v0)){
-
-                    // add it set of fixed vids
-                    fixed_vids.insert(v0);
-
-                    // fix non manifold vid
-                    m.vid_label_manifold_fix(v0);
-                }
-
-                if ( !m.vert_is_manifold_cluster(v1) &&
-                     DOES_NOT_CONTAIN(fixed_vids, v1)){
-
-                    // add it set of fixed vids
-                    fixed_vids.insert(v1);
-
-                    // fix non manifold vid
-                    m.vid_label_manifold_fix(v1);
-                }
-            }
-        }
-
-        // Update mesh to add the new vid to be checked
-        verts = m.num_verts();
-    }
-
-    double time = stopChrono(t);
+    double time = stopChrono(t); // end timer and print
     cout << "Fixing Time: " << time << endl;
 
     // Edge split updated normals only if the new face are on the surface

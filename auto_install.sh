@@ -1,4 +1,5 @@
 #!/bin/bash
+cd 
 
 echo "What do you want to install?"
 echo "1) - base programs (git, htop, telegram...)"
@@ -26,6 +27,7 @@ if [ $command -eq 2 ]; then
 	git clone https://github.com/dshot92/internship_volume_mesh.git
 	cd internship_volume_mesh
 	cp -r internship_examples ../cinolib/examples/
+	mv ../cinolib/examples/internship_examples/cpp_files/fix_manifold.h ../cinolib/include/cinolib
 	exit 1
 fi
 

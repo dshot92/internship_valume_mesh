@@ -11,24 +11,14 @@
 
 #include <QApplication>
 #include <cinolib/meshes/meshes.h>
+#include <cinolib/fix_manifold.h>
 #include <cinolib/gui/qt/qt_gui_tools.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <cinolib/drawable_sphere.h>
 #include <cinolib/geometry/vec3.h>
 #include <cinolib/profiler.h>
-#include <chrono>
 
-inline static std::chrono::time_point<std::chrono::system_clock> startChrono()
-{
-    return std::chrono::system_clock::now();
-}
-
-inline double stopChrono(std::chrono::time_point<std::chrono::system_clock> &start)
-{
-    auto time = std::chrono::system_clock::now() - start;
-    return std::chrono::duration <double, std::milli> (time).count() / 1000;
-}
 
 //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -40,11 +30,11 @@ int main(int argc, char **argv)
     QApplication a(argc, argv);
     string mesh;
 
-    mesh = "/mesh/trimesh/torus.obj";                 // 56 NON manifold points -> 0 points
+//    mesh = "/mesh/trimesh/torus.obj";                 // 56 NON manifold points -> 0 points
 //    mesh = "/mesh/trimesh/blub_triangulated.obj";     // 49 NON manifold points -> 0 points
 //    mesh = "/mesh/trimesh/casting.off";               // 26 NON manifold points -> 0 points
 //    mesh = "/mesh/trimesh/maxFace.obj";               // 16 NON manifold points -> 0 points
-//    mesh = "/mesh/trimesh/twirl.off";                 // 14 NON manifold points -> 0 points
+    mesh = "/mesh/trimesh/twirl.off";                 // 14 NON manifold points -> 0 points
 //    mesh = "/mesh/trimesh/3holes.obj";                //  7 NON manifold points -> 0 points
 //    mesh = "/mesh/trimesh/sharp_sphere.off";          //  6 NON manifold points -> 0 points
 //    mesh = "/mesh/trimesh/spot_triangulated.obj";     //  6 NON manifold points -> 0 points
@@ -117,23 +107,11 @@ int main(int argc, char **argv)
         }
     }
 
-    // for testing
-    if ( !fix ) verts=0;
+    auto t = startChrono(); // Start timer
 
-    auto t = startChrono();
-    // Check every vert of mesh
-    for(uint vid = 0; vid < verts ; ++vid){
-        if( !m.vert_is_manifold_cluster(vid)){
+    fix_non_manifold_verts(m);
 
-            // Fix Non manifold vertss
-            m.vid_label_manifold_fix(vid);
-
-        }
-
-        // Update number of mesh vertices
-        verts = m.num_verts();
-    }
-    double time = stopChrono(t);
+    double time = stopChrono(t); // end timer and print
     cout << "Fixing Time: " << time << endl;
 
     // Apply color labels
