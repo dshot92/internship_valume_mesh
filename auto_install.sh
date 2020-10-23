@@ -39,9 +39,6 @@ if [ $command -eq 2 ]; then
 	echo $'\n Cloning cinolib \n'
 	git clone --recursive https://github.com/mlivesu/cinolib.git
 
-	echo $'\n Cloning Internship repo \n'
-	git clone https://github.com/dshot92/internship_volume_mesh.git
-
 	cd internship_volume_mesh
 	echo $'\n Moving and copying files into cinolib \n'
 	cp -r internship_examples ../cinolib/examples/

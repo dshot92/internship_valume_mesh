@@ -1,0 +1,22 @@
+[2020-10-13 09:06:14.480218] [0x00004c4c] (info) : Connect CEF app
+[2020-10-13 09:06:14.482170] [0x00004c4c] (info) : 2020,9,21,64h
+[2020-10-13 09:06:14.482170] [0x00004c4c] (info) : Memory 7.855 GB
+[2020-10-13 09:06:16.528383] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://www.adobe.com/go/UpdateDescr?noCache=169691390 Got Data len=1975
+[2020-10-13 09:06:16.529357] [0x00002890] (info) : CURLRequestClient::OnRequestComplete https://www.adobe.com/go/UpdateDescr?noCache=169691390 error=0
+[2020-10-13 09:06:16.544975] [0x00004c4c] (error) : JS : (index.html:1) : Uncaught ReferenceError: showProgressBar is not defined
+[2020-10-13 09:06:20.626336] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/api/xml?action=common-info Got Data len=885
+[2020-10-13 09:06:20.626336] [0x00002890] (info) : CURLRequestClient::OnRequestComplete https://unica.adobeconnect.com/api/xml?action=common-info error=0
+[2020-10-13 09:06:20.738132] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml Got Data len=7748
+[2020-10-13 09:06:20.738132] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml Got Data len=5544
+[2020-10-13 09:06:20.738132] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml Got Data len=2640
+[2020-10-13 09:06:20.738132] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml Got Data len=452
+[2020-10-13 09:06:20.738132] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml Got Data len=996
+[2020-10-13 09:06:20.790694] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml Got Data len=8184
+[2020-10-13 09:06:20.790694] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml Got Data len=2912
+[2020-10-13 09:06:20.792645] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml Got Data len=4292
+[2020-10-13 09:06:20.792645] [0x00002890] (info) : CURLRequestClient::OnDownloadData https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml Got Data len=6169
+[2020-10-13 09:06:20.792645] [0x00002890] (info) : CURLRequestClient::OnRequestComplete https://unica.adobeconnect.com/mag_informatica_1a/?mode=xml error=0
+[2020-10-13 09:06:21.697245] [0x00004c4c] (warning) : JS : (coral_min.js?ver=11.0.0:2) : document.registerElement is deprecated and will be removed in M73, around March 2019. Please use window.customElements.define instead. See https://www.chromestatus.com/features/4642138092470272 for more details.
+[2020-10-13 09:06:21.788977] [0x00004c4c] (error) : JS : (?session=em3breezyv87dtme97h2cpvs&addinLogin=true:533) : Uncaught TypeError: Cannot read property 'clientHeight' of null
+[2020-10-13 09:06:22.362963] [0x00004c4c] (error) : JS : (?session=em3breezyv87dtme97h2cpvs&addinLogin=true:533) : Uncaught TypeError: Cannot read property 'clientHeight' of null
+[2020-10-13 09:06:28.389737] [0x00004c4c] (info) : Closing Log File
