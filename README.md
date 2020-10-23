@@ -19,7 +19,7 @@ chmod +x auto_install.sh
 
 # After installing
 
-Add function definition to relative .h files
+Add function declarations to relative .h files
 
 ```c++
 # cinolib/include/cinolib/meshes/ abstract_mesh.h
