@@ -44,7 +44,12 @@ if [ $command -eq 2 ]; then
 	cp -r internship_examples ../cinolib/examples/
 	mv ../cinolib/examples/internship_examples/cpp_files/fix_manifold.h ../cinolib/include/cinolib/
 	
-	echo "Add function declarations to relative .h files"
+	echo "####################################################"
+	echo "#                                                  #"
+	echo "#  Add function declarations to relative .h files  #"
+	echo "#                                                  #"
+	echo "####################################################"
+	echo ""
 	exit 1
 fi
 
