@@ -82,8 +82,19 @@ if [ $command -eq 5 ]; then
 	unzip graphite3_1.7.3.zip
 	rm graphite3_1.7.3.zip
 	cd graphite3_1.7.3
-	sudo apt install -y xorg-dev libglu1-mesa-dev
+	sudo apt install -y xorg-dev libglu1-mesa-dev cmake
 	echo $'\n Building Graphite3 1.7.3 \n'
 	./make_it.sh
+
+	sudo -i gedit /usr/share/applications/name.desktop &
+
+	echo $'\n Enter this lines in the gedit window:\n\n'
+	echo $'[Desktop Entry]'
+	echo $'Type=Application'
+	echo $'Terminal=true'
+	echo $'Name=Graphite'
+	echo $'Icon=//home/dshot/graphite3_1.7.3/GraphiteThree/lib/icons/logos/graphite-window-icon.xpm'
+	echo $'Exec=/home/dshot/graphite3_1.7.3/bin/graphite.sh'
+	
 	exit 1
 fi
