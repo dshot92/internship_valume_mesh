@@ -43,6 +43,9 @@ if [ $command -eq 2 ]; then
 	echo $'\n Moving and copying files into cinolib \n'
 	cp -r internship_examples ../cinolib/examples/
 	mv ../cinolib/examples/internship_examples/cpp_files/fix_manifold.h ../cinolib/include/cinolib/
+	gedit ../cinolib/include/cinolib/meshes/abstract_mesh.h &
+	gedit ../cinolib/include/cinolib/meshes/trimesh.h &
+	gedit ../cinolib/include/cinolib/meshes/tetmesh.h &
 	
 	echo "####################################################"
 	echo "#                                                  #"
